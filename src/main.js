@@ -78,7 +78,7 @@ Vue.config.productionTip = false
 Vue.use(VueI18n);
 Vue.use(ElementUI);
 
-Vue.use("https://cdn.jsdelivr.net/npm/spacingjs");
+// Vue.use("https://cdn.jsdelivr.net/npm/spacingjs");
 
 Vue.config.lang = 'zh-cn'
 Vue.locale('zh-cn', zhLocale)

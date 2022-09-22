@@ -1,28 +1,19 @@
 import axios from '@/config/request.js'
 import qs from 'qs';
 
-const basePath = '/admin'
+const basePath = '/api/system'
 
-export const getMenu = (param) => {
+export const logout = () => {
 	return axios.request({
-		url: '/permission/getMenu',
-		method: 'post',
-		data: param
+    url: `/api/auth/logout`,
+    method: 'post'
 	})
 }
 
-export const getData = () => {
-	return axios.request({
-		url: '/home/getData',
-		method: 'get'
-	})
-}
-
-export const getUser = (params) => {
+export const getUser = () => {
     return axios.request({
-        url: '/user/getUser',
-        method: 'get',
-        params
+        url: `${basePath}/admin/sysuser/getUser`,
+        method: 'get'
     })
 }
 
@@ -36,5 +27,13 @@ export const login = (param) => {
     },
     method: 'post',
     data: qs.stringify(param)
+  })
+}
+
+export const getUserPage = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuser/page?page=${param.page.page}&limit=${param.page.limit}`,
+    method: 'post',
+    data: param.data
   })
 }

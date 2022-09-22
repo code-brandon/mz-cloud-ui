@@ -28,7 +28,7 @@
     </el-form>
 
     <el-table
-            :data="tableData"
+            :data="tableData.list"
             border
             style="width: 100%">
       <el-table-column
@@ -40,33 +40,42 @@
               width="55">
       </el-table-column>
       <el-table-column
-              prop="date"
-              label="日期"
+              prop="nickName"
+              label="用户昵称"
               width="150">
       </el-table-column>
       <el-table-column
-              prop="name"
-              label="姓名"
+              prop="loginName"
+              label="登录账号"
               width="120">
       </el-table-column>
       <el-table-column
-              prop="province"
-              label="省份"
+              prop="sex"
+              label="用户性别"
               width="120">
       </el-table-column>
       <el-table-column
-              prop="city"
-              label="市区"
+              prop="deptId"
+              label="部门ID"
               width="120">
       </el-table-column>
       <el-table-column
-              prop="address"
-              label="地址"
+              prop="avatar"
+              label="头像地址"
               width="300">
       </el-table-column>
       <el-table-column
-              prop="zip"
-              label="邮编"
+              prop="email"
+              label="用户邮箱">
+      </el-table-column>
+      <el-table-column
+              prop="userName"
+              label="用户账号"
+              width="120">
+      </el-table-column>
+      <el-table-column
+              prop="userType"
+              label="用户类型"
               width="120">
       </el-table-column>
       <el-table-column
@@ -84,20 +93,21 @@
     <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page="currentPage4"
-            :page-sizes="[100, 200, 300, 400]"
-            :page-size="100"
+            :current-page="tableData.currPage"
+            :page-sizes="[10, 20, 30, 40]"
+            :page-size="tableData.pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             background
-            :total="400">
+            :total="tableData.totalCount">
     </el-pagination>
   </div>
 </template>
 
 <script>
+  import { getUserPage} from '@/api/user.js';
   export default {
     // 组件名称
-    name: 'Index',
+    name: 'User',
     // 组件参数 接收来自父组件的数据
     props: {},
     // 局部注册的组件
@@ -105,81 +115,13 @@
     // 组件状态值
     data() {
       return {
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1517 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1519 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1516 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1519 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1516 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1519 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1516 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1519 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1516 弄',
-          zip: 200333
-        }],
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4,
+        param: {
+          page: {
+            page: 1,
+            limit: 10
+          },
+        },
+        tableData: {},
         formInline: {
           user: '',
           region: ''
@@ -199,6 +141,14 @@
       },
       onSubmit() {
         console.log('submit!');
+      },
+      getUserPage(param){
+        getUserPage(param).then(({data:res}) => {
+          console.log(res)
+          this.tableData = res.data
+        }).catch(error => {
+          console.log(error)
+        })
       }
     },
     // 计算属性
@@ -216,7 +166,7 @@
      * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
      */
     created() {
-
+      this.getUserPage(this.param)
     },
     /**
      * 在挂载开始之前被调用：相关的 render 函数首次被调用。

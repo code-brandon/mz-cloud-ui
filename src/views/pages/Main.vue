@@ -11,12 +11,9 @@
 -->
 <template>
   <el-container>
-    <el-aside style="
-    display: flex;
-    flex-direction: column;
-" width="">
+    <el-aside style="display: flex;flex-direction: column;" width="200px">
       <span class="admin-title">{{adminTitle}}</span>
-      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+      <el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
         <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-location"></i>
@@ -70,7 +67,7 @@
 </template>
 
 <script>
-  import {L2Dwidget} from 'live2d-widget'
+  // import {L2Dwidget} from 'live2d-widget'
   export default {
     // 组件名称
     name: 'Index',
@@ -117,7 +114,7 @@
      * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
      */
     created() {
-      setTimeout(function () {
+      /*setTimeout(function () {
         L2Dwidget.init({
           model: {
             jsonPath: 'https://cdn.jsdelivr.net/gh/wangsrGit119/wangsr-image-bucket/L2Dwidget/live2d-widget-model-haruto/assets/haruto.model.json',
@@ -139,8 +136,7 @@
             "vOffset": 0
           }
         });
-      },1000);
-      setInterval(this.setTime, 1000);
+      },1000);*/
     },
     /**
      * 在挂载开始之前被调用：相关的 render 函数首次被调用。
