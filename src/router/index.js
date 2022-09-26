@@ -16,6 +16,11 @@ const routes = [
         path: '/',
         component: () => import(/!* webpackChunkName: "index" *!/ '../views/pages/admin/User.vue'),
       },*/
+      {
+        // UserProfile 将被渲染到 User 的 <router-view> 内部
+        path: '/dashboard',
+        component: () => import(/* webpackChunkName: "index" */ '../views/pages/admin/User.vue'),
+      },
     ],
   },
   {

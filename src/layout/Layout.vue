@@ -1,19 +1,27 @@
 <template>
-  <div class="wrapper">
-    <v-head></v-head>
-    <v-sidebar></v-sidebar>
-    <div class="content-box" :class="{'content-collapse':collapse}">
-      <v-tags></v-tags>
-      <div class="content">
-        <transition name="move" mode="out-in">
-          <keep-alive :include="tagsList">
-            <router-view></router-view>
-          </keep-alive>
-        </transition>
-        <el-backtop target=".content"></el-backtop>
+  <el-container class="layout-main">
+    <vSidebar width="200px">
+
+    </vSidebar>
+    <el-container>
+      <vHead>Header</vHead>
+      <div class="content-box" :class="{'content-collapse':collapse}">
+        <v-tags></v-tags>
+        <div class="content">
+          <transition name="move" mode="out-in">
+            <keep-alive :include="tagsList">
+              <router-view></router-view>
+            </keep-alive>
+          </transition>
+          <el-backtop target=".content"></el-backtop>
+        </div>
       </div>
-    </div>
-  </div>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
+      <el-footer>Footer</el-footer>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
@@ -25,7 +33,19 @@
     data() {
       return {
         tagsList: [],
-        collapse: false
+        collapse: false,
+        items: [
+          {
+            icon: 'el-icon-document',
+            index: 'dashboard',
+            title: '系统首页',
+            children:{
+              icon: 'el-icon-document',
+              index: 'dashboard',
+              title: '系统首页',
+            }
+          }
+        ]
       };
     },
     components: {
@@ -48,3 +68,43 @@
     }
   };
 </script>
+
+<style>
+  .el-header, .el-footer {
+    background-color: #B3C0D1;
+    color: #333;
+    text-align: center;
+    line-height: 60px;
+  }
+
+  .sidebar {
+    min-height: 100vh;
+    background-color: #D3DCE6;
+    color: #333;
+    text-align: center;
+    line-height: 200px;
+  }
+
+  .el-main {
+    background-color: #E9EEF3;
+    color: #333;
+    text-align: center;
+    line-height: 160px;
+  }
+
+  body > .el-container {
+    margin-bottom: 40px;
+  }
+
+  .el-container:nth-child(5) .el-aside,
+  .el-container:nth-child(6) .el-aside {
+    line-height: 260px;
+  }
+
+  .el-container:nth-child(7) .el-aside {
+    line-height: 320px;
+  }
+  .layout-main{
+    /*height: 100vh;*/
+  }
+</style>
