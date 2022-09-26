@@ -3,21 +3,20 @@
     <vSidebar width="200px">
 
     </vSidebar>
-    <el-container>
+    <el-container class="layout-body">
       <vHead>Header</vHead>
       <div class="content-box" :class="{'content-collapse':collapse}">
         <v-tags></v-tags>
         <div class="content">
-          <transition name="move" mode="out-in">
-            <keep-alive :include="tagsList">
-              <router-view></router-view>
-            </keep-alive>
-          </transition>
           <el-backtop target=".content"></el-backtop>
         </div>
       </div>
       <el-main>
-        <router-view></router-view>
+        <transition name="move" mode="out-in">
+          <keep-alive :include="tagsList">
+            <router-view></router-view>
+          </keep-alive>
+        </transition>
       </el-main>
       <el-footer>Footer</el-footer>
     </el-container>
@@ -83,13 +82,14 @@
     color: #333;
     text-align: center;
     line-height: 200px;
+    transition: width .28s;
   }
 
   .el-main {
     background-color: #E9EEF3;
     color: #333;
     text-align: center;
-    line-height: 160px;
+    /*line-height: 160px;*/
   }
 
   body > .el-container {
@@ -106,5 +106,8 @@
   }
   .layout-main{
     /*height: 100vh;*/
+  }
+  .layout-body{
+    height: 100%;
   }
 </style>
