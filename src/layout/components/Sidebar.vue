@@ -21,38 +21,46 @@
             unique-opened
             router
     >
-      <template v-for="item in items">
-        <template v-if="item.subs">
-          <el-submenu :index="item.index" :key="item.index">
+      <template v-for="item in asynMenu">
+        <template v-if="item.children&&item.children.length>0">
+          <el-submenu :index="item.path" :key="item.name">
             <template slot="title">
-              <i :class="item.icon"></i>
-              <span slot="title">{{ item.title }}</span>
+              <i :class="'el-icon-'+item.meta.icon"></i>
+              <span slot="title">{{ item.meta.title }}</span>
             </template>
-            <template v-for="subItem in item.subs">
+            <template v-for="subItem in item.children">
               <el-submenu
-                      v-if="subItem.subs"
-                      :index="subItem.index"
-                      :key="subItem.index"
+                      v-if="subItem.children&&subItem.children.length>0"
+                      :index="item.path+'/'+subItem.path"
+                      :key="item.name+'/'+subItem.name"
               >
-                <template slot="title">{{ subItem.title }}</template>
+                <i :class="'el-icon-'+subItem.meta.icon"></i>
+                <template slot="title">{{ subItem.meta.title }}</template>
                 <el-menu-item
-                        v-for="(threeItem,i) in subItem.subs"
-                        :key="i"
-                        :index="threeItem.index"
-                >{{ threeItem.title }}</el-menu-item>
+                        v-for="(threeItem,i) in subItem.children"
+                        :key="subItem.path+'/'+threeItem.path"
+                        :index="subItem.path+'/'+threeItem.path"
+                >
+                  <i :class="'el-icon-'+threeItem.meta.icon"></i>
+                  {{ subItem.path+'/'+threeItem.path }}
+                </el-menu-item>
               </el-submenu>
+              <!--根据index进行跳转-->
               <el-menu-item
                       v-else
-                      :index="subItem.index"
-                      :key="subItem.index"
-              >{{ subItem.title }}</el-menu-item>
+                      :index="item.path+'/'+subItem.path"
+                      :key="item.name+'/'+subItem.name"
+              >
+                <i :class="'el-icon-'+subItem.meta.icon"></i>
+                {{ subItem.meta.title }}
+              </el-menu-item>
             </template>
           </el-submenu>
         </template>
         <template v-else>
-          <el-menu-item :index="item.index" :key="item.index">
-            <i :class="item.icon"></i>
-            <span slot="title">{{ item.title }}</span>
+          <el-menu-item :index="item.name" :key="item.path">
+            <i :class="'el-icon-'+item.meta.icon"></i>
+            <span slot="title">{{ item.meta.title }}</span>
           </el-menu-item>
         </template>
       </template>
@@ -62,27 +70,20 @@
 
 <script>
   import bus from './Bus';
+
   export default {
     data() {
       return {
         collapse: false,
-        items: [
-          {
-            icon: 'el-icon-document',
-            index: 'dashboard',
-            title: '系统首页',
-            children:{
-              icon: 'el-icon-document',
-              index: 'dashboard',
-              title: '系统首页',
-            }
-          }
-        ]
       };
     },
     computed: {
       onRoutes() {
-        return this.$route.path.replace('/', '');
+        return this.$route.path;
+        // return this.$route.path.replace('/', '');;
+      },
+      asynMenu() {
+        return this.$store.state.tab.menus;
       }
     },
     created() {
@@ -96,7 +97,10 @@
 </script>
 
 <style lang="less" scoped>
-.sidebar-el-menu{
-  height: 100%;
-}
+  .sidebar-el-menu {
+    height: 100%;
+    text-align: left;
+    width: 200px;
+    min-height: 400px;
+  }
 </style>

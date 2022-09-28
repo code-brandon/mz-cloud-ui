@@ -53,12 +53,14 @@
           delItem.path === this.$route.fullPath && this.$router.push(item.path);
         }else{
           this.$router.push('/');
+          this.setTags(this.$route);
         }
       },
       // 关闭全部标签
       closeAll(){
         this.tagsList = [];
         this.$router.push('/');
+        this.setTags(this.$route);
       },
       // 关闭其他标签
       closeOther(){
@@ -82,6 +84,7 @@
             path: route.fullPath,
             name: route.name
           })
+          console.log(this.tagsList)
         }
         bus.$emit('tags', this.tagsList);
       },
@@ -164,7 +167,7 @@
   }
 
   .tags-li.active {
-    color: #fff;
+    color: #e33838;
   }
 
   .tags-li-title {
@@ -174,11 +177,11 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     margin-right: 5px;
-    color: #666;
+    color: #db6c13;
   }
 
   .tags-li.active .tags-li-title {
-    color: #fff;
+    color: rgb(222 35 26 / 77%);
   }
 
   .tags-close-box {

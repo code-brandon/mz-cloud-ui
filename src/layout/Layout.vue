@@ -1,15 +1,10 @@
 <template>
   <el-container class="layout-main">
-    <vSidebar width="200px">
-
-    </vSidebar>
+    <vSidebar> </vSidebar>
     <el-container class="layout-body">
       <vHead>Header</vHead>
       <div class="content-box" :class="{'content-collapse':collapse}">
         <v-tags></v-tags>
-        <div class="content">
-          <el-backtop target=".content"></el-backtop>
-        </div>
       </div>
       <el-main>
         <transition name="move" mode="out-in">
@@ -32,19 +27,7 @@
     data() {
       return {
         tagsList: [],
-        collapse: false,
-        items: [
-          {
-            icon: 'el-icon-document',
-            index: 'dashboard',
-            title: '系统首页',
-            children:{
-              icon: 'el-icon-document',
-              index: 'dashboard',
-              title: '系统首页',
-            }
-          }
-        ]
+        collapse: false
       };
     },
     components: {
@@ -89,6 +72,7 @@
     background-color: #E9EEF3;
     color: #333;
     text-align: center;
+    overflow: unset;
     /*line-height: 160px;*/
   }
 
@@ -105,9 +89,11 @@
     line-height: 320px;
   }
   .layout-main{
-    /*height: 100vh;*/
+    height: 100vh;
   }
   .layout-body{
-    height: 100%;
+    /*min-height: 100%;*/
+    /*overflow-y: scroll;*/
+    overflow: auto;
   }
 </style>

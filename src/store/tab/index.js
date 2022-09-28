@@ -9,7 +9,7 @@ export default {
       {
         path: '/home',
         name: 'Home',
-        label: '首页',
+        title: '首页',
         icon: 'home'
       }
     ],
@@ -39,9 +39,12 @@ export default {
       const result = state.tabsList.findIndex(item=>item.name === val.name)
       state.tabsList.splice(result,1)
     },
-    setMenu(state,val){
+    SET_MENU(state,val){
       state.menus = val;
       Cookies.set('menus', JSON.stringify(val));
+    },
+    GET_MENU(state) {
+      state.menus = state.menus || Cookies.get('menus');
     },
     clearMenu(state){
       state.menus = [];
@@ -49,6 +52,9 @@ export default {
     },
   },
   actions:{
+    GetMenu({ commit }){
+      commit('GET_MENU',this)
+    },
     // 获取菜单
     MenuTree({ commit }) {
       return  new Promise((resolve, reject) => {
@@ -58,53 +64,41 @@ export default {
             reject()
           }
           let menus = res.data
-          console.log(menus)
-          commit('setMenu',menus)
+          commit('SET_MENU',menus)
           const menuArray = [];
 
           menus.forEach(item => {
-            let tempMenu = {
-              path: item.path,
-              name: item.name,
-              meta: { title: item.name},
-            }
-            if (item.children) {
-              item.children = item.children.map(item => {
-                item.component = () => import(`views/${item.component}`)
-                return item;
-              });
-              menuArray.push(...item.children);
-            } else {
-              item.component = () => import(`views/${item.url}`);
-              menuArray.push(item);
-            }
-            menuArray.push();
-          });
-
-
-          menus.forEach(item => {
-            menuNew.name = item.name
-            menuNew.path = item.path
-            menuNew.meta.title = item.name
-            if (item.children) {
-              item.children = item.children.map(item => {
-                item.component = () => import(`views/${item.url}`)
-                return item;
-              });
-              menuArray.push(...item.children);
-            } else {
-              item.component = () => import(`views/${item.url}`);
-              menuArray.push(item);
+            if (item.isFrame === 1) {
+              let rous = {
+                name: item.name,
+                path: item.path,
+                hidden: item.hidden,
+                redirect: item.redirect,
+                alwaysShow: item.alwaysShow,
+                meta: item.meta,
+                children: []
+              }
+              rous.component = () => item.component.toLowerCase() === 'layout' ? import('@/layout/Layout') : import(`views/pages/${item.component}`);
+              if (item.children) {
+                rous.children = item.children.map(item => {
+                  let rous = {
+                    name: item.name,
+                    path: item.path,
+                    hidden: item.hidden,
+                    redirect: item.redirect,
+                    component: null,
+                    alwaysShow: item.alwaysShow,
+                    meta: item.meta,
+                    children: []
+                  }
+                  rous.component = () => item.component.toLowerCase() === 'layout' ? import('@/layout/Layout') : import(`views/pages/${item.component}`);
+                  return rous;
+                });
+              }
+              menuArray.push(rous);
             }
           });
-          console.log(menuArray);
-          // 路由的动态添加
-          // menuArray.forEach(item => {
-          //   // console.log( item);
-          //   // 更换router的版本为"vue-router":"^3.5.3"
-          //   vueRouter.addRoute('Main', item)
-          // })
-          resolve()
+          resolve(menuArray)
         }).catch(error => {
           reject(error)
         })

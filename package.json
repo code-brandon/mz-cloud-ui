@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --copy",
-    "build": "vue-cli-service build"
+    "serve": "vue-cli-service serve --mode production --copy",
+    "serve-dev": "vue-cli-service serve --mode development --copy",
+    "build": "vue-cli-service build",
+    "build-dev": "vue-cli-service build --mode development"
   },
   "dependencies": {
     "animate.css": "^4.1.1",
@@ -14,6 +16,7 @@
     "element-ui": "^2.15.8",
     "highlight.js": "^11.5.1",
     "hover.css": "^2.3.2",
+    "imagemin-pngquant": "^6.0.1",
     "js-cookie": "^3.0.1",
     "live2d-widget": "^3.1.4",
     "lodash": "^4.17.21",
@@ -38,6 +41,8 @@
     "css-loader": "^6.7.1",
     "file-loader": "^6.2.0",
     "image-webpack-loader": "^8.1.0",
+    "imagemin-gifsicle": "^7.0.0",
+    "imagemin-mozjpeg": "^8.0.0",
     "less": "^4.1.2",
     "less-loader": "^8.1.1",
     "raw-loader": "^4.0.2",
