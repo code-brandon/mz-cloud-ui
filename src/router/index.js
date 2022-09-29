@@ -10,24 +10,7 @@ const routes = [
     name: 'Main',
     meta:{title:'首页',},
     component: () => import(/* webpackChunkName: "index" */ '../layout/Layout'),
-    children: [
-      /*{
-        name: "user",
-        path: "user",
-        component: () => import(/!* webpackChunkName: "index" *!/ '../views/pages/system/user/index')
-      }*/
-      /*{
-        // 当 /user/:id/profile 匹配成功
-        // UserProfile 将被渲染到 User 的 <router-view> 内部
-        path: '/',
-        component: () => import(/!* webpackChunkName: "index" *!/ '../views/pages/admin/User.vue'),
-      },*/
-      /*{
-        // UserProfile 将被渲染到 User 的 <router-view> 内部
-        path: '/user',
-        component: () => import(/!* webpackChunkName: "index" *!/ 'views/pages/system/user/index.vue'),
-      },*/
-    ],
+    children: [],
   },
   {
     path: '/login',
@@ -51,29 +34,34 @@ const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
 router.beforeEach((to, from, next) => {
   console.log("触发路由守卫",to, from)
   store.dispatch("GetToken")
-  store.dispatch("GetMenu").then(r => {
-    console.log("r",r)
-  })
+  store.dispatch("GetMenu")
 
   let token = store.getters.token;
+
+  console.log("Token状态：",!!token)
 
   if (!!token) {
     /* has token*/
     if (to.path === '/login') {
       next({ path: '/' })
     } else {
+      console.log("是否有菜单信息：",store.getters.menus.length === 0,store.getters.menus)
       if (store.getters.menus.length === 0) {
         console.log("拉取用户信息")
         // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetInfo').then(() => {
-          store.dispatch('MenuTree').then((accessRoutes,err) => {
+        store.dispatch('GetInfo').then((res) => {
+          store.dispatch('MenuTree').then((accessRoutes) => {
             // 根据roles权限生成可访问的路由表
             router.addRoutes(accessRoutes) // 动态添加可访问路由表
             next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+          }).catch(err => {
+            console.error(err)
           })
         }).catch(err => {
           store.dispatch('LogOut').then(() => {
             next({ path: '/' })
+          }).catch(err => {
+            console.error(err)
           })
         })
       } else {
@@ -108,4 +96,4 @@ VueRouter.prototype.push = function (location, resolve, reject) {
 }
 
 
-  export default router;
+export default router;
