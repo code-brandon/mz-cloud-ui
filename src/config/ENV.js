@@ -1,6 +1,6 @@
 export default {
 	baseUrl: {
 		dev: 'http://localhost:88',
-		pro: ''
+		pro: 'http://localhost:88'
 	}
 }

@@ -44,7 +44,8 @@ export default {
       Cookies.set('menus', JSON.stringify(val));
     },
     GET_MENU(state) {
-      state.menus = state.menus || Cookies.get('menus');
+      console.log(!Cookies.get('menus'),Cookies.get('menus'))
+      state.menus = state.menus || Cookies.get('menus') || [];
     },
     clearMenu(state){
       state.menus = [];

@@ -15,7 +15,6 @@
           status-icon
           :rules="rules"
           ref="form"
-          label-width="100px"
           class="login_container">
     <h3 class="login_title">系统登录</h3>
     <el-form-item
@@ -32,8 +31,9 @@
             prop="password">
       <el-input type="password" v-model="formData.password" autocomplete="off" placeholder="请输入密码"></el-input>
     </el-form-item>
-    <el-form-item class="login_submit">
-      <el-button type="primary" @click="login" class="login_submit">登录</el-button>
+    <el-form-item class="login_submit" style="text-align: center;">
+      <el-button type="primary" @click="login('form')" native-type="submit" class="login_submit">登录</el-button>
+      <el-button type="primary" @click="resetForm('form')"  class="login_submit">重置</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -82,12 +82,24 @@
     },
     // 组件方法
     methods: {
-      login(){
-        this.$store.dispatch('Login',this.formData).then(()=>{
-          this.$router.push({ path: "/" }).catch(()=>{});
-        }).catch((err)=>{
-          console.log(err)
-        })
+      login(formName){
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$store.dispatch('Login',this.formData).then((res)=>{
+              if (res.code === this.$OkCode) {
+                this.$router.push({path: "/"});
+              }
+            }).catch((err)=>{
+              console.error(err)
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
       }
     },
     // 计算属性

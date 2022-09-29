@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import {login,getUser} from '@/api/user.js';
+import {login,getUser,logout} from '@/api/user.js';
 export default {
   state:{
     token:'',
@@ -21,9 +21,14 @@ export default {
       state.user = val
       Cookies.set('user',JSON.stringify(val))
     },
+    CLEAR_USER(state) {
+      state.user = {};
+      Cookies.remove('user')
+    },
     CLEAR_TOKEN(state) {
       state.token = '';
       Cookies.remove('token')
+      Cookies.remove('tokenData')
     },
     GET_TOKEN(state) {
       state.token = state.token || Cookies.get('token');
@@ -36,11 +41,13 @@ export default {
       const password = userInfo.password
       const code = userInfo.code
       const uuid = userInfo.uuid
+
       return  new Promise((resolve, reject) => {
         login({username, password, code, uuid}).then(({data:res}) => {
-          console.log(res)
-          commit('SET_TOKEN', res)
-          resolve()
+          if (res.code === 0) {
+            commit('SET_TOKEN', res.data);
+          }
+          resolve(res)
         }).catch(error => {
           reject(error)
         })
@@ -68,9 +75,9 @@ export default {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          commit('SET_PERMISSIONS', [])
+          // commit('SET_TOKEN', '')
+          // commit('SET_ROLES', [])
+          // commit('SET_PERMISSIONS', [])
           commit('CLEAR_TOKEN', state)
           resolve()
         }).catch(error => {

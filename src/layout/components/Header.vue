@@ -53,13 +53,13 @@
       return {
         collapse: true,
         fullscreen: false,
-        name: 'linxin',
+        name: 'XiaoZheng',
         message: 2
       };
     },
     computed: {
       username() {
-        let username = localStorage.getItem('ms_username');
+        let username = this.$store.getters.user.nickName
         return username ? username : this.name;
       }
     },
@@ -67,8 +67,10 @@
       // 用户名下拉菜单选择事件
       handleCommand(command) {
         if (command == 'loginout') {
-          localStorage.removeItem('ms_username');
-          this.$router.push('/login');
+          this.$store.dispatch('LogOut').then(() => {
+            this.$router.push('/login');
+          }).catch(err => err);
+
         }
       },
       // 侧边栏折叠
