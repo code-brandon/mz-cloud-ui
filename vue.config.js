@@ -20,7 +20,7 @@ module.exports = defineConfig({
   indexPath: "index.html",  // 输出html文件名
   transpileDependencies: true,
   productionSourceMap: false, // 取消.map文件的打包，加快打包速度
-  publicPath: process.env.NODE_ENV === 'production' ? '/admin/' : './',
+  publicPath: './',
   chainWebpack: (config) => {
     config.resolve.symlinks(true); // 修复热更新失效
     // 如果使用多页面打包，使用vue inspect --plugins查看html是否在结果数组中
@@ -35,63 +35,8 @@ module.exports = defineConfig({
       .set('components', resolve('./src/components'))
       .set('assets', resolve('./src/assets'))
       .set('views', resolve('./src/views'));
-    // 修改图片打包配置
-    // config.module
-      /*.rule("images")
-      .test(/\.(png|jpe?g|gif|webp)(\?.*)?$/)
-      .use("image-webpack-loader")
-      .loader("image-webpack-loader")
-      .options({
-        bypassOnDebug: true,
-        mozjpeg: {
-          progressive: true,
-          quality: 65
-        },
-        optipng: {
-          enabled: false,
-        },
-        pngquant: {
-          quality: '65-90',
-          speed: 4
-        },
-        gifsicle: {
-          interlaced: false,
-        }
-      }).end()*/
-      /*.rule('url-images')
-      .test(/\.(png|jpe?g|gif|webp|cur)(\?.*)?$/)
-      .use('url-loader')
-      .loader('url-loader')
-      .options({
-        // 修改它的选项...
-        name: `assets/img/[name].[contenthash:8].[ext]`,// 修改文件名
-        // 这是字节(Byte)限制,1KB = 1024Byte,当图片的大小小于4KB(默认值),则会被转为base64格式,打包进js文件,
-        // 大于4KB,则会被打包进 img 文件夹,供链接请求获取。
-        limit: 13000,
-      }).end()*/
-      /*.rule('other-file')
-      .test(/\.(cur)(\?.*)?$/)
-      .use('file-loader')
-      .loader('file-loader')
-      .options({
-        // 修改它的选项...
-        name: `assets/other/[name].[contenthash:8].[ext]`,// 修改文件名
-      }).end()*/
     // 修改js文件名
     // config.output.chunkFilename(`assets/js/[name].js`)
-    if (process.env.NODE_ENV === 'production') {
-      config.optimization.minimizer[0].options.terserOptions.compress.warnings = false
-      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
-      config.optimization.minimizer[0].options.terserOptions.compress.drop_debugger = true
-      config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
-      return {
-        plugins: [],
-        output: { // 输出重构  打包编译后的 文件名称  【模块名称.版本号.时间戳】
-
-        }
-      }
-
-    }
   },
   css: {
     extract: {
