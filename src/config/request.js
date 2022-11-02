@@ -8,6 +8,9 @@ import {Notification, MessageBox, Message, Loading} from 'element-ui'
 const baseUrl = process.env.NODE_ENV === "development" ? Config.baseUrl.dev : Config.baseUrl.pro
 console.log(process.env, baseUrl)
 
+// 是否显示重新登录
+export let isRelogin = { show: false };
+
 class HttpRequest {
   /**
    * 构造函数
@@ -25,7 +28,9 @@ class HttpRequest {
     const config = {
       // TODO 注意配置文件正确的参数
       baseURL: this.baseUrl,
-      headers: {},
+      headers: {
+        'env':'dev'
+      },
       timeout: 12000 // request timeout
     }
     return config
@@ -40,6 +45,7 @@ class HttpRequest {
     instance.interceptors.request.use(function (config) {
       // 在请求被发送之前做些什么
 
+      // console.log("headers:",config.headers);
       // 是否需要设置 token
       const isToken = (config.headers || {}).isToken === false
       // 是否需要防止数据重复提交
@@ -47,10 +53,15 @@ class HttpRequest {
       const token = store.getters.token;
       if (token && !isToken) {
         config.headers['Authorization'] = 'Bearer ' + token // 让每个请求携带自定义token 请根据实际情况自行修改
-        delete config.headers.isToken
       }
       return config;
     }, function (error) {
+      console.log(error)
+      Message({
+        title: "警告",
+        message: error,
+        type: "warning"
+      });
       // 处理请求错误
       return Promise.reject(error);
     });
@@ -61,15 +72,23 @@ class HttpRequest {
       if (response.data.code > 15000 && response.data.code < 20000 ) {
 
         if (response.data.code === 15004 && !response.config.url.includes('oauth/token','login','auth/logout')) {
-          MessageBox.alert(response.data.message, "登录失效", {
-            confirmButtonText: "跳转登录页面",
-            callback: action => {
+          if (!isRelogin.show) {
+            isRelogin.show = true;
+            MessageBox.confirm(response.data.message, "登录失效", {
+              confirmButtonText: "跳转登录页面",
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(()=>{
+              isRelogin.show = false;
               // 跳转登录页
-              store.commit('CLEAR_TOKEN')
-              store.commit('CLEAR_USER')
+              store.dispatch('UserCLear');
               router.push('/login')
-            }
-          });
+            }).catch((error) => {
+              isRelogin.show = false;
+              console.log(error)
+            });
+          }
+          return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         } else {
           Message.error(response.data.message ? response.data.message : "用户登录状态失效");
         }
@@ -77,29 +96,40 @@ class HttpRequest {
       }else if (response.status === 200) {
         if (response.data.code === 1) {
           Message({
+            title: "失败",
+            message: response.data.message,
+            type: "warning"
+          });
+          return Promise.reject(response.data.message);
+        }
+        if (response.data.code === 500 || response.data.status === 503) {
+          Message({
             title: "错误",
             message: response.data.message,
             type: "error"
           });
-
+          return Promise.reject(response.data.message);
         }
         if (response.data.code === 0) {
-          /*Message({
-            title: "成功",
-            message: `操作成功`,
-            type: "success"
-          });*/
           Notification({
             title: '成功',
             message: '这是一条成功的提示消息',
-            type: 'success'
+            type: 'success',
+            duration: 1500
           });
-
         }
       }
       // 对响应数据做些什么
       return response;
     }, function (error) {
+      console.log(error)
+      if (error.code == "ERR_NETWORK" || error.code == "ECONNABORTED" || error.response.status == 503 || error.response.status == 500) {
+        Message({
+          title: "网络异常!",
+          message: error.message,
+          type: "error"
+        });
+      }
       if (error.response.status == 401) {
         Message({
           title: "警告",
@@ -119,6 +149,8 @@ class HttpRequest {
   request(options) {
     const instance = Axios.create()
     options = {...this.getInsideConfig(), ...options}
+    // headers 整合
+    options.headers = {...this.getInsideConfig().headers,...options.headers}
     // axios实例 给拦截器进行配置
     this.interceptors(instance)
     // axios实例 配置
