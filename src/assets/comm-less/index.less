@@ -58,7 +58,6 @@ html {
   --loading-bar: #ffa6c3;
   --img-max-width: 100%;
   --container_spacing: 15px;
-  --res-url: 'https://www.yangbuyi.top/themes/joe2.0';
 }
 
 .mz_container {
@@ -76,7 +75,7 @@ html {
 
 @font-face {
   font-family: 'myFont';
-  src: url(../font/HarmonyOS_Sans_SC_Regular.ttf);
+  src: url(../fonts/HarmonyOS_Sans_SC_Regular.ttf);
   font-weight: 600;
   font-style: normal;
 }
@@ -95,7 +94,7 @@ a {
 }
 
 a, button, button > *, *[class*="submenu"], *[class*="menu"] {
-  color: var(--minor);
+  //color: var(--minor);
   cursor: url(../mouse-style/link.cur), auto !important;
 }
 
@@ -218,4 +217,33 @@ body:after {
   position: absolute;
   z-index: 1;
   white-space: nowrap;
+}
+
+.mz-popover{
+  min-width: 110px !important;
+}
+
+
+// my-element-ui
+.el-table__fixed-right{
+  height: 100% !important;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+}
+
+.el-pagination{
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+
+.el-submenu [class^=fa],body > .el-menu--vertical  .el-menu .el-menu-item > i[class^='fa'] {
+  vertical-align: middle;
+  margin-right: 5px;
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
 }
