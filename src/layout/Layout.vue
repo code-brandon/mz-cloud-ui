@@ -3,15 +3,14 @@
     <vSidebar> </vSidebar>
     <el-container class="layout-body">
       <vHead>Header</vHead>
-      <div class="content-box" :class="{'content-collapse':collapse}">
+      <div class="content-box">
         <v-tags></v-tags>
       </div>
       <el-main>
-        <transition name="move" mode="out-in">
           <keep-alive :include="tagsList">
-            <router-view></router-view>
+            <router-view v-if="$route.meta.keepAlive" :key="fullPath"></router-view>
           </keep-alive>
-        </transition>
+          <router-view v-if="!$route.meta.keepAlive"></router-view>
       </el-main>
       <el-footer>Footer</el-footer>
     </el-container>
@@ -24,21 +23,34 @@
   import vTags from './components/Tags.vue'; // 路由标签栏
   import bus from './components/Bus'; // Vue组件通信中eventBus的使用
   export default {
+    // 组件名称
+    name: 'Layout',
     data() {
       return {
         tagsList: [],
-        collapse: false
       };
     },
     components: {
       vHead,
       vSidebar,
-      vTags
+      vTags,
+    },
+    methods:{
+      // 根据fullUrl清除keepAlive
+      clearKeepAlive(fullUrl) {
+        console.log('bus触发要清除的keepAlive', fullUrl);
+      },
+    },
+    computed:{
+      fullPath() {
+        console.log(this.$route.fullPath);
+        return this.$route.fullPath;
+      },
     },
     created() {
-      bus.$on('collapse-content', msg => {
-        this.collapse = msg;
-      });
+      // 注册监听全局的clearKeepAlive方法,可在其他组件中触发此方法
+      bus.$on("clearKeepAlive", this.clearKeepAlive);
+
       // 只有在标签页列表里的页面才使用keep-alive，即关闭标签之后就不保存到内存中了。
       bus.$on('tags', msg => {
         let arr = [];
@@ -51,7 +63,7 @@
   };
 </script>
 
-<style>
+<style lang="less" scoped>
   .el-header, .el-footer {
     background-color: #B3C0D1;
     color: #333;
@@ -61,9 +73,9 @@
 
   .sidebar {
     min-height: 100vh;
-    background-color: #D3DCE6;
+    /*background-color: rgb(50, 65, 87);*/
     color: #333;
-    text-align: center;
+    /*text-align: center;*/
     line-height: 200px;
     transition: width .28s;
   }
@@ -71,7 +83,7 @@
   .el-main {
     background-color: #E9EEF3;
     color: #333;
-    text-align: center;
+    /*text-align: center;*/
     overflow: unset;
     /*line-height: 160px;*/
   }
@@ -92,8 +104,6 @@
     height: 100vh;
   }
   .layout-body{
-    /*min-height: 100%;*/
-    /*overflow-y: scroll;*/
     overflow: auto;
   }
 </style>

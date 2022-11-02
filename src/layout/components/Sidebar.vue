@@ -10,9 +10,11 @@
   修改时间：
 -->
 <template>
-  <div class="sidebar">
+  <div class="sidebar" :style="`width: ${collapse ? '' : '170px'}`">
     <el-menu
             class="sidebar-el-menu"
+            @open="handleOpen"
+            @close="handleClose"
             :default-active="onRoutes"
             :collapse="collapse"
             background-color="#324157"
@@ -20,62 +22,46 @@
             active-text-color="#20a0ff"
             unique-opened
             router
+            mode="vertical"
     >
-      <template v-for="item in asynMenu">
-        <template v-if="item.children&&item.children.length>0">
-          <el-submenu :index="item.path" :key="item.name">
-            <template slot="title">
-              <i :class="'el-icon-'+item.meta.icon"></i>
-              <span slot="title">{{ item.meta.title }}</span>
-            </template>
-            <template v-for="subItem in item.children">
-              <el-submenu
-                      v-if="subItem.children&&subItem.children.length>0"
-                      :index="item.path+'/'+subItem.path"
-                      :key="item.name+'/'+subItem.name"
-              >
-                <i :class="'el-icon-'+subItem.meta.icon"></i>
-                <template slot="title">{{ subItem.meta.title }}</template>
-                <el-menu-item
-                        v-for="(threeItem,i) in subItem.children"
-                        :key="subItem.path+'/'+threeItem.path"
-                        :index="subItem.path+'/'+threeItem.path"
-                >
-                  <i :class="'el-icon-'+threeItem.meta.icon"></i>
-                  {{ subItem.path+'/'+threeItem.path }}
-                </el-menu-item>
-              </el-submenu>
-              <!--根据index进行跳转-->
-              <el-menu-item
-                      v-else
-                      :index="item.path+'/'+subItem.path"
-                      :key="item.name+'/'+subItem.name"
-              >
-                <i :class="'el-icon-'+subItem.meta.icon"></i>
-                {{ subItem.meta.title }}
-              </el-menu-item>
-            </template>
-          </el-submenu>
-        </template>
-        <template v-else>
-          <el-menu-item :index="item.name" :key="item.path">
-            <i :class="'el-icon-'+item.meta.icon"></i>
-            <span slot="title">{{ item.meta.title }}</span>
-          </el-menu-item>
-        </template>
-      </template>
+      <SidebarItem v-for="(item,index) in asynMenu" :itemMenu="item" :key="index"></SidebarItem>
     </el-menu>
   </div>
 </template>
 
 <script>
   import bus from './Bus';
+  import SidebarItem from './SidebarItem';
 
   export default {
+    // 组件名称
+    name: 'Sidebar',
+    components: {
+      SidebarItem
+    },
     data() {
       return {
         collapse: false,
       };
+    },
+    methods:{
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      filterMenus(item){
+        let arr =  item.filter(to=>{
+          return !to.hidden;
+        }).map(to=>{
+          if (to.children && to.children.length > 0) {
+            to.children =  this.filterMenus(to.children);
+          }
+          return to;
+        })
+        return arr;
+      },
     },
     computed: {
       onRoutes() {
@@ -83,24 +69,49 @@
         // return this.$route.path.replace('/', '');;
       },
       asynMenu() {
-        return this.$store.state.tab.menus;
+        let that = this;
+        let menus = this.$store.state.tab.menus;
+        let arr = that.filterMenus(menus);
+        console.log("arr:",arr)
+        return arr;
       }
     },
     created() {
       // 通过 Event Bus 进行组件间通信，来折叠侧边栏
       bus.$on('collapse', msg => {
+        console.log(msg)
         this.collapse = msg;
-        bus.$emit('collapse-content', msg);
       });
     }
   };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
   .sidebar-el-menu {
     height: 100%;
-    text-align: left;
-    width: 200px;
-    min-height: 400px;
   }
+  .sidebar .el-menu--collapse .el-submenu>.el-submenu__title>span {
+    height: 0;
+    width: 0;
+    overflow: hidden;
+    visibility: hidden;
+    display: inline-block;
+  }
+  .sidebar .el-menu--collapse .el-submenu>.el-submenu__title>.el-submenu__icon-arrow.el-icon-arrow-right{
+    display: none;
+  }
+  .sidebar> .el-menu .el-menu--inline li.el-menu-item{
+    background-color: #1f2d3d !important;
+  }
+  .sidebar> .el-menu .el-menu--inline li.el-menu-item:hover{
+    background-color: #273644 !important;
+  }
+  .el-submenu .el-menu-item {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 45px;
+    min-width: auto !important;
+  }
+
+
 </style>

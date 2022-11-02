@@ -36,6 +36,8 @@
 <script>
   import bus from './Bus';
   export default {
+    // 组件名称
+    name: 'Tags',
     data() {
       return {
         tagsList: []
@@ -47,6 +49,11 @@
       },
       // 关闭单个标签
       closeTags(index) {
+
+        console.log(this.tagsList[index].path)
+
+        bus.$emit("clearKeepAlive", this.tagsList[index].path); // 清除缓存
+
         const delItem = this.tagsList.splice(index, 1)[0];
         const item = this.tagsList[index] ? this.tagsList[index] : this.tagsList[index - 1];
         if (item) {

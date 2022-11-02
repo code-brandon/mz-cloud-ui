@@ -11,12 +11,14 @@
 -->
 <template>
   <div class="header">
-    <!-- 折叠按钮 -->
-    <div class="collapse-btn" @click="collapseChage">
-      <i v-if="!collapse" class="el-icon-s-fold"></i>
-      <i v-else class="el-icon-s-unfold"></i>
+    <div class="header-left">
+      <!-- 折叠按钮 -->
+      <div class="collapse-btn" @click="collapseChage()">
+        <i v-if="!collapse" class="el-icon-s-fold"></i>
+        <i v-else class="el-icon-s-unfold"></i>
+      </div>
+      <div class="logo">后台管理系统</div>
     </div>
-    <div class="logo">后台管理系统</div>
     <div class="header-right">
       <div class="header-user-con">
         <!-- 全屏显示 -->
@@ -26,9 +28,12 @@
           </el-tooltip>
         </div>
         <!-- 用户头像 -->
-        <div class="user-avator">
+        <el-avatar shape="square" size="small" fit="cover"  :src="avatarUrl">
+          <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"/>
+        </el-avatar>
+        <!--<div class="user-avator">
           <img src="@/assets/logo.png" />
-        </div>
+        </div>-->
         <!-- 用户名下拉菜单 -->
         <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
@@ -36,7 +41,7 @@
                         <i class="el-icon-caret-bottom"></i>
                     </span>
           <el-dropdown-menu slot="dropdown">
-            <a href="https://github.com/emoxiansheng/vue-element-admin" target="_blank">
+            <a href="https://github.com/code-brandon" target="_blank">
               <el-dropdown-item>项目仓库</el-dropdown-item>
             </a>
             <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
@@ -49,18 +54,23 @@
 <script>
   import bus from './Bus';
   export default {
+    // 组件名称
+    name: 'Header',
     data() {
       return {
-        collapse: true,
+        collapse: false,
         fullscreen: false,
         name: 'XiaoZheng',
-        message: 2
+        screenWidth: null
       };
     },
     computed: {
       username() {
         let username = this.$store.getters.user.nickName
         return username ? username : this.name;
+      },
+      avatarUrl(){
+        return this.$store.getters.user.avatar || require('@/assets/logo.png')
       }
     },
     methods: {
@@ -69,13 +79,19 @@
         if (command == 'loginout') {
           this.$store.dispatch('LogOut').then(() => {
             this.$router.push('/login');
-          }).catch(err => err);
+          }).catch(err => {
+            console.log(err)
+          });
 
         }
       },
       // 侧边栏折叠
       collapseChage() {
         this.collapse = !this.collapse;
+        bus.$emit('collapse', this.collapse);
+      },
+      collapseEmit(flg) {
+        this.collapse = flg;
         bus.$emit('collapse', this.collapse);
       },
       // 全屏事件
@@ -107,40 +123,59 @@
       }
     },
     mounted() {
-      if (document.body.clientWidth < 1500) {
-        this.collapseChage();
+      //获取屏幕尺寸
+      this.screenWidth = document.body.clientWidth
+      window.onresize = () => {
+        console.log('高度');
+        //屏幕尺寸变化
+        return (() => {
+          this.screenWidth = document.body.clientWidth
+        })()
+      }
+
+    },
+    watch: {
+      screenWidth: function (n, o) {
+        console.log(`屏幕大小：${n}px`)
+        if (n < 1500) {
+          this.collapseEmit( true);
+        } else {
+          this.collapseEmit( false);
+        }
       }
     }
   };
 </script>
 <style lang="less" scoped>
   .header {
+    overflow: hidden;
     position: relative;
     box-sizing: border-box;
     width: 100%;
-    height: 70px;
+    height: 50px;
     font-size: 22px;
+    display: flex;
+    justify-content: space-between;
     /*color: #fff;*/
     background-color: #D3DCE6;
   }
   .collapse-btn {
-    float: left;
-    padding: 0 21px;
+    padding: 0 10px;
     cursor: pointer;
-    line-height: 70px;
   }
   .header .logo {
-    float: left;
     width: 250px;
-    line-height: 70px;
+  }
+  .header-left{
+    display: flex;
+    align-items: center;
   }
   .header-right {
-    float: right;
-    padding-right: 50px;
+    display: flex;
+    padding-right: 20px;
   }
   .header-user-con {
     display: flex;
-    height: 70px;
     align-items: center;
   }
   .btn-fullscreen {
@@ -172,9 +207,7 @@
   }
   .user-name {
     margin-left: 10px;
-  }
-  .user-avator {
-    margin-left: 20px;
+    white-space: nowrap;
   }
   .user-avator img {
     display: block;
@@ -184,7 +217,6 @@
   }
   .el-dropdown-link {
     color: #fff;
-    cursor: pointer;
   }
   .el-dropdown-menu__item {
     text-align: center;
