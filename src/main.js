@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-import VueI18n from 'vue-i18n'
 import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
@@ -10,14 +9,22 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 import "hover.css";
 import './assets/comm-less/index.less'
+import './assets/fontawesome/all.css'
+import './assets/fontawesome/v5-font-face.min.css'
+import './assets/fontawesome/v4-font-face.min.css'
+import './assets/boxicons/boxicons.min.css'
+import './assets/boxicons/animations.css'
+import './assets/boxicons/transformations.css'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
+// import '@material-design-icons/font/index.scss';
 // import thljs from 'highlight.js';
 
 // import 'highlight.js/styles/atom-one-dark.css' //样式
 
 //国际化 默认是引用的
-import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
-import enLocale from 'element-ui/lib/locale/lang/en'
+// import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
+// import enLocale from 'element-ui/lib/locale/lang/en'
 
 import * as dayjs from 'dayjs'
 import * as isLeapYear from 'dayjs/plugin/isLeapYear' // import plugin
@@ -75,14 +82,14 @@ dayjs.locale('zh-cn') // use locale
 
 Vue.config.productionTip = false
 
-Vue.use(VueI18n);
+// Vue.use(VueI18n);
 Vue.use(ElementUI);
 
 // Vue.use("https://cdn.jsdelivr.net/npm/spacingjs");
 
-Vue.config.lang = 'zh-cn'
-Vue.locale('zh-cn', zhLocale)
-Vue.locale('en', enLocale)
+// Vue.config.lang = 'zh-cn'
+// Vue.locale('zh-cn', zhLocale)
+// Vue.locale('en', enLocale)
 
 // Vue.directive('highlight',function(el){
 //     hljs.configure({useBR: true});
