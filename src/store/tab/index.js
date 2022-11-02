@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
-import {getMenuTree} from '@/api/menu.js';
+import {isURL} from 'utils/mz-utils.js'
+import {getUserMenuTree} from '@/api/system/menu.js';
 
 export default {
   state: {
@@ -44,10 +45,10 @@ export default {
       Cookies.set('menus', JSON.stringify(val));
     },
     GET_MENU(state) {
-      console.log(!Cookies.get('menus'),Cookies.get('menus'))
-      state.menus = state.menus || Cookies.get('menus') || [];
+      console.log(state.menus || (Cookies.get('menus')|| []))
+      state.menus = state.menus || (Cookies.get('menus')|| []);
     },
-    clearMenu(state){
+    CLEAR_MENU(state){
       state.menus = [];
       Cookies.remove('menus');
     },
@@ -57,9 +58,9 @@ export default {
       commit('GET_MENU',this)
     },
     // 获取菜单
-    MenuTree({ commit }) {
+    UserMenuTree({ commit }) {
       return  new Promise((resolve, reject) => {
-        getMenuTree().then(({data: res}) => {
+        getUserMenuTree().then(({data: res}) => {
 
           if (res.code != 0 ) {
             reject()
@@ -68,37 +69,25 @@ export default {
           commit('SET_MENU',menus)
           const menuArray = [];
 
-          menus.forEach(item => {
-            if (item.isFrame === 1) {
-              let rous = {
-                name: item.name,
-                path: item.path,
-                hidden: item.hidden,
-                redirect: item.redirect,
-                alwaysShow: item.alwaysShow,
-                meta: item.meta,
-                children: []
-              }
-              rous.component = () => item.component.toLowerCase() === 'layout' ? import('@/layout/Layout') : import(`views/pages/${item.component}`);
-              if (item.children) {
-                rous.children = item.children.map(item => {
-                  let rous = {
-                    name: item.name,
-                    path: item.path,
-                    hidden: item.hidden,
-                    redirect: item.redirect,
-                    component: null,
-                    alwaysShow: item.alwaysShow,
-                    meta: item.meta,
-                    children: []
-                  }
-                  rous.component = () => item.component.toLowerCase() === 'layout' ? import('@/layout/Layout') : import(`views/pages/${item.component}`);
-                  return rous;
-                });
-              }
-              menuArray.push(rous);
-            }
-          });
+          // menus.forEach(item => {
+          //   if (!isURL(item.path )) {
+          //     let rous = {
+          //       name: item.name,
+          //       path: item.path,
+          //       hidden: item.hidden,
+          //       redirect: item.redirect,
+          //       alwaysShow: item.alwaysShow,
+          //       meta: item.meta,
+          //       children: []
+          //     }
+          //     rous.component = () => item.component.toLowerCase() === 'layout' ? import('@/layout/Layout').default : import(`views/pages/${item.component}`).default;
+          //     if (item.children) {
+          //       rous.children = filterMenus(item.children)
+          //     }
+          //     menuArray.push(rous);
+          //   }
+          // });
+          menuArray.push(...filterMenus(menus))
           resolve(menuArray)
         }).catch(error => {
           reject(error)
@@ -111,3 +100,25 @@ export default {
   }
 }
 
+function filterMenus(item) {
+  let arr = item.filter(to => {
+    return !to.hidden;
+  }).map(to => {
+    let rous = {
+      name: to.name,
+      path: to.path,
+      hidden: to.hidden,
+      redirect: to.redirect,
+      component: null,
+      alwaysShow: to.alwaysShow,
+      meta: to.meta,
+      children: []
+    }
+    rous.component = () => to.component.toLowerCase() === 'layout' ? import('@/layout/Layout') : import(`@/views/pages/${to.component}`);
+    if (to.children && to.children.length > 0) {
+      rous.children = filterMenus(to.children);
+    }
+    return rous;
+  })
+  return arr;
+}

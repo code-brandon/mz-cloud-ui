@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import {login,getUser,logout} from '@/api/user.js';
+import {login,getUser,logout} from '@/api/system/user.js';
 export default {
   state:{
     token:'',
@@ -44,6 +44,7 @@ export default {
 
       return  new Promise((resolve, reject) => {
         login({username, password, code, uuid}).then(({data:res}) => {
+          console.log(res)
           if (res.code === 0) {
             commit('SET_TOKEN', res.data);
           }
@@ -61,10 +62,12 @@ export default {
     GetInfo({ commit }) {
       return new Promise((resolve, reject) => {
         getUser().then(({data:res}) => {
-          let  user = res.data
-          commit('SET_USER',user)
-          const avatar = (user.avatar == "" || user.avatar == null) ? require("@/assets/images/profile.jpg") : process.env.VUE_APP_BASE_API + user.avatar;
-          commit('SET_AVATAR',avatar)
+          if (res.code === 0) {
+            let  user = res.data
+            commit('SET_USER',user)
+            const avatar = (user.avatar == "" || user.avatar == null) ? require("@/assets/images/profile.jpg") : process.env.VUE_APP_BASE_API + user.avatar;
+            commit('SET_AVATAR',avatar)
+          }
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -73,17 +76,20 @@ export default {
     },
     // 退出系统
     LogOut({ commit, state }) {
+      let that = this;
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
-          // commit('SET_TOKEN', '')
-          // commit('SET_ROLES', [])
-          // commit('SET_PERMISSIONS', [])
-          commit('CLEAR_TOKEN', state)
+          that.dispatch('UserCLear')
           resolve()
         }).catch(error => {
           reject(error)
         })
       })
     },
+    UserCLear({ commit, state }){
+      commit('CLEAR_TOKEN', state)
+      commit('CLEAR_USER', state)
+      commit('CLEAR_MENU', state)
+    }
   }
 }
