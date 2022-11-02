@@ -13,7 +13,7 @@ export const logout = () => {
 export const getUser = () => {
     return axios.request({
         url: `${basePath}/admin/sysuser/getUser`,
-        method: 'get'
+        method: 'get',
     })
 }
 
@@ -34,6 +34,38 @@ export const getUserPage = (param) => {
   return axios.request({
     url: `${basePath}/admin/sysuser/page?page=${param.page.page}&limit=${param.page.limit}`,
     method: 'post',
-    data: param.data
+    data: param.formInline
   })
 }
+
+export const getUserInfo = (userId) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuser/info/${userId}`,
+    method: 'get'
+  })
+}
+
+export const saveUser = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuser/save`,
+    method: 'post',
+    data: param
+  })
+}
+
+export const updateUser = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuser/update`,
+    method: 'put',
+    data: param
+  })
+}
+
+export const resetPasswd = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuser/resetPasswd`,
+    method: 'put',
+    data: param
+  })
+}
+
