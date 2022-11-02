@@ -10,35 +10,58 @@
   修改时间：
 -->
 <template>
-  <el-form
-          :model="formData"
-          status-icon
-          :rules="rules"
-          ref="form"
-          class="login_container">
-    <h3 class="login_title">系统登录</h3>
-    <el-form-item
-            label="用户名"
-            label-width="80px"
-            prop="username"
-            class="username"
-    >
-      <el-input type="input" v-model="formData.username" autocomplete="off" placeholder="请输入账户"></el-input>
-    </el-form-item>
-    <el-form-item
-            label="密码"
-            label-width="80px"
-            prop="password">
-      <el-input type="password" v-model="formData.password" autocomplete="off" placeholder="请输入密码"></el-input>
-    </el-form-item>
-    <el-form-item class="login_submit" style="text-align: center;">
-      <el-button type="primary" @click="login('form')" native-type="submit" class="login_submit">登录</el-button>
-      <el-button type="primary" @click="resetForm('form')"  class="login_submit">重置</el-button>
-    </el-form-item>
-  </el-form>
+  <div class="login_form" :style="bgImageUrl">
+    <el-form
+            :model="formData"
+            status-icon
+            :rules="rules"
+            ref="form"
+            class="login_container">
+      <h3 class="login_title">Mz后台系统登录</h3>
+      <el-row type="flex">
+        <el-col :span="12">
+          <img style="width: 100%" src="@/assets/images/dttbangong.png"></img>
+        </el-col>
+        <el-col :span="12" style="    margin: auto 0;">
+          <el-row>
+            <el-col>
+              <el-form-item
+                      label="用户账户"
+                      label-width="80px"
+                      prop="username"
+                      class="username"
+              >
+                <el-input type="input" v-model="formData.username" autocomplete="off" placeholder="请输入账户"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col>
+              <el-form-item
+                      label="用户密码"
+                      label-width="80px"
+                      prop="password">
+                <el-input type="password" v-model="formData.password"
+                          @keyup.enter.native="Login"
+                          show-password
+                          autocomplete="off" placeholder="请输入密码"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col>
+              <div class="login_submit_div">
+                <el-button type="primary" @click.native.prevent="Login" class="login_submit">登录</el-button>
+                <el-button type="primary" @click="resetForm"  class="login_submit">重置</el-button>
+              </div>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+    </el-form>
+    <div class="login-footer"></div>
+  </div>
 </template>
 
 <script>
+
+  import {bingBg} from '@/api/common/thirdPartApi'
 
   export default {
     // 组件名称
@@ -50,6 +73,7 @@
     // 组件状态值
     data() {
       return {
+        imageUrl:'',
         formData: {},
         // 校验
         rules: {
@@ -82,15 +106,15 @@
     },
     // 组件方法
     methods: {
-      login(formName){
-        this.$refs[formName].validate((valid) => {
+      Login(){
+        this.$refs.form.validate((valid) => {
           if (valid) {
             this.$store.dispatch('Login',this.formData).then((res)=>{
               if (res.code === this.$OkCode) {
                 this.$router.push({path: "/"});
               }
-            }).catch((err)=>{
-              console.error(err)
+            }).catch(error=>{
+              console.log(error)
             })
           } else {
             console.log('error submit!!');
@@ -98,12 +122,28 @@
           }
         });
       },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
+      bingBg(){
+        bingBg().then(({data:res}) => {
+          let images = res.MediaContents;
+          this.imageUrl = images[0].ImageContent.Image.Url;
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+      resetForm() {
+        this.$refs.form.resetFields();
       }
     },
     // 计算属性
-    computed: {},
+    computed: {
+      bgImageUrl(){
+        let url = this.imageUrl;
+        if (!url) return `--bgImageUrl:url(${url})`
+        url = url.substr(0, url.indexOf('&'));
+        url = url.substring(0, url.lastIndexOf('_')) + '_UHD.jpg';
+        return `--bgImageUrl:url(${url})`
+      }
+    },
     // 侦听器
     watch: {},
     // 以下是生命周期钩子   注：没用到的钩子请自行删除
@@ -117,7 +157,7 @@
      * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
      */
     created() {
-
+      this.bingBg()
     },
     /**
      * 在挂载开始之前被调用：相关的 render 函数首次被调用。
@@ -179,15 +219,42 @@
 <!--然而子组件的根节点元素会同时被设置了scoped的父css样式和设置了scoped的子css样式影响，-->
 <!--这么设计的目的是父组件可以对子组件根元素进行布局。-->
 <style lang="less" >
+
+  .login_form{
+    min-width: 550px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: var(--bgImageUrl);
+    background-size: cover;
+  }
+
+  .login-footer {
+    height: 40px;
+    line-height: 40px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    font-family: Arial;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
   .login_container {
     border-radius: 15px;
     background-clip: padding-box;
-    margin: 180px auto;
-    width: 350px;
-    padding: 35px 35px 15px 35px;
-    background-color: #fff;
+    width: 750px;
+    padding: 40px;
+    background-color: #fff6;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
+    box-sizing: border-box;
+  }
+  .el-input__inner{
+    background-color: #ffffff2b !important;
   }
 
   .login_title {
@@ -196,8 +263,14 @@
     color: #505458;
   }
 
-  .login_submit {
+  .el-button.login_submit {
+    width: 35%;
+  }
+
+  .login_submit_div {
     margin: 10px auto 0px auto;
+    display: flex;
+    justify-content: center;
   }
   /*取消 页面长度而出现的滚动条*/
   body,html,#app{
