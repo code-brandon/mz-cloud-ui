@@ -10,7 +10,7 @@
   修改时间：
 -->
 <template>
-  <el-dialog width="680px" :title="!dataForm.roleId ? '新增' : '修改'" :close-on-click-modal="false"
+  <el-dialog width="680px" :title="!dataForm.menuId ? '新增' : '修改'" :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
       label-width="80px">
@@ -50,24 +50,31 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="12">
+        <el-col :span="12" v-if="dataForm.menuType !=='F'">
+          <el-form-item label="菜单图标" prop="icon">
+            <el-input v-model="dataForm.icon" placeholder="菜单图标"></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12" v-if="dataForm.menuType !=='F'">
           <el-form-item label="路由地址" prop="path">
             <el-input v-model="dataForm.path" placeholder="路由地址"></el-input>
           </el-form-item>
         </el-col>
 
-        <el-col :span="12">
-          <el-form-item label="菜单图标" prop="icon">
-            <el-input v-model="dataForm.icon" placeholder="菜单图标"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="备注">
-            <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+        <el-col :span="12" v-if="dataForm.menuType !=='F'">
+          <el-form-item label="组件地址" prop="component">
+            <el-input v-model="dataForm.component" placeholder="组件地址"></el-input>
           </el-form-item>
         </el-col>
 
-        <el-col :span="12">
+<!--        <el-col :span="12" v-if="dataForm.menuType ==='C'">
+          <el-form-item label="路由参数">
+            <el-input v-model="dataForm.query" placeholder="路由参数"></el-input>
+          </el-form-item>
+        </el-col>-->
+
+        <el-col :span="12" v-if="dataForm.menuType !=='F'">
           <el-form-item label="是否外链" prop="isFrame">
             <el-radio-group v-model="dataForm.isFrame">
               <el-radio label="0">是</el-radio>
@@ -75,7 +82,7 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12" v-if="dataForm.menuType !=='F'">
           <el-form-item label="显示状态" prop="visible">
             <el-radio-group v-model="dataForm.visible">
               <el-radio label="0">显示</el-radio>
@@ -83,7 +90,7 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12" v-if="dataForm.menuType !=='F'">
           <el-form-item label="菜单状态" prop="status">
             <el-radio-group v-model="dataForm.status">
               <el-radio label="0">正常</el-radio>
@@ -91,12 +98,19 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12" v-if="dataForm.menuType ==='C'">
           <el-form-item label="是否缓存" prop="isCache">
             <el-radio-group v-model="dataForm.isCache">
               <el-radio label="0">缓存</el-radio>
               <el-radio label="1">不缓存</el-radio>
             </el-radio-group>
+          </el-form-item>
+        </el-col>
+
+
+        <el-col :span="12">
+          <el-form-item label="备注">
+            <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -140,14 +154,14 @@ export default {
         {
           id: "0",
           name: "顶级目录",
-          children: []
+          children: [],
         }
       ],
       /** 转换菜单数据结构 */
       normalizer(node) {
-        if (node.children && !node.children.length) {
-          delete node.children;
-        }
+        // if (node.children && !node.children.length) {
+        //   delete node.children;
+        // }
         return {
           id: node.id,
           label: node.name,
@@ -166,6 +180,9 @@ export default {
         ],
         path: [
           { required: true, message: '路由地址不能为空', trigger: 'blur' }
+        ],
+        component: [
+          { required: true, message: '组件地址不能为空', trigger: 'blur' }
         ],
         isFrame: [
           { required: true, message: '是否为外链（0是 1否）不能为空', trigger: 'blur' }
@@ -207,7 +224,7 @@ export default {
     },
     getMenuTree() {
       getMenuTree().then(({ data: res }) => {
-        this.options[0].children.push(...res.data)
+        this.options[0]["children"] = res.data;
       }).catch(err => {
         console.log(err)
       })
