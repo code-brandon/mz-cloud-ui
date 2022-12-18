@@ -21,7 +21,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   // mode: 'hash', //history
   base: process.env.NODE_ENV === "development" ? Config.publicPath.dev : Config.publicPath.pro, // 与vue.config.js 的 publicPath 一致
   routes
@@ -33,22 +33,17 @@ const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
 
 // 导航守卫逻辑 from:从何处来，to:到哪里
 router.beforeEach((to, from, next) => {
-  console.log("触发路由守卫",to, from)
   store.dispatch("GetToken")
   store.dispatch("GetMenu")
 
   let token = store.getters.token;
-
-  console.log("Token状态：",!!token)
 
   if (!!token) {
     /* has token*/
     if (to.path === '/login') {
       next({ path: '/' })
     } else {
-      console.log("是否有菜单信息：",store.getters.menus.length === 0,store.getters.menus)
       if (store.getters.menus.length === 0) {
-        console.log("拉取用户信息")
         // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then((res) => {
           if (res.code === 0) {
@@ -56,21 +51,27 @@ router.beforeEach((to, from, next) => {
               if (accessRoutes.length > 0) {
                 // 根据roles权限生成可访问的路由表
                 router.addRoutes(accessRoutes); // 动态添加可访问路由表
+              } else {
+                let isExistPath = false;
+                router.getRoutes().forEach(i=>{
+                  if (i.path == to.path) {
+                    isExistPath = true;
+                  }
+                })
+                if (!isExistPath) {
+                  throw '该用户没有菜单信息';
+                }
               }
-              console.log(router.getRoutes(), accessRoutes)
               next({...to, replace: true}) // hack方法 确保addRoutes已完成
             }).catch(err => {
-              console.error(err)
-              store.dispatch("UserCLear")
+              router.app.$message.error(err);
+              store.dispatch("UserCLear").then(r => {
+                next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+              })
             });
           }
         }).catch(err => {
           store.commit('CLEAR_TOKEN')
-          /*store.dispatch('LogOut').then(() => {
-            next({ path: '/' })
-          }).catch(err => {
-            console.error(err)
-          })*/
         });
       } else {
         next()
@@ -78,9 +79,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     // 没有token
-    console.log(whiteList.indexOf(to.path))
     if (whiteList.indexOf(to.path) !== -1) {
-      console.log("前往：", to.path);
       // 在免登录白名单，直接进入
       next()
     } else {

@@ -56,7 +56,6 @@ class HttpRequest {
       }
       return config;
     }, function (error) {
-      console.log(error)
       Message({
         title: "警告",
         message: error,
@@ -122,7 +121,6 @@ class HttpRequest {
       // 对响应数据做些什么
       return response;
     }, function (error) {
-      console.log(error)
       if (error.code == "ERR_NETWORK" || error.code == "ECONNABORTED" || error.response.status == 503 || error.response.status == 500) {
         Message({
           title: "网络异常!",
@@ -130,7 +128,7 @@ class HttpRequest {
           type: "error"
         });
       }
-      if (error.response.status == 401) {
+      if (error.response.status && error.response.status == 401) {
         Message({
           title: "警告",
           message: error.response.data.message,
