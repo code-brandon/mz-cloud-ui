@@ -60,7 +60,7 @@
       <el-table-column prop="dataScope" header-align="center" align="center" label="数据范围">
       </el-table-column>
       <el-table-column header-align="center" align="center" label="角色状态">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
             <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" active-value="0"
               inactive-value="1">
@@ -79,7 +79,7 @@
       <el-table-column :show-overflow-tooltip="true" prop="remark" header-align="center" align="center" label="备注">
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle({roleId:scope.row.roleId,type:1})">编辑
           </el-button>
           <el-popover popper-class="mz-popover" placement="top" width="110" trigger="hover">
@@ -108,12 +108,14 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <AddOrUpdate v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getRolePage"></AddOrUpdate>
+    <RoleUser v-if="roleUserVisible" ref="roleUser" @refreshDataList="getRolePage"></RoleUser>
   </div>
 </template>
 
 <script>
 import { getRolePage } from '@/api/system/role.js';
 import AddOrUpdate from './add-or-update'
+import RoleUser from './role-user.vue'
 import CommonControlCard from '@/components/common/CommonControlCard';
 import CommonSearchReset from '@/components/common/CommonSearchReset';
 export default {
@@ -122,11 +124,12 @@ export default {
   // 组件参数 接收来自父组件的数据
   props: {},
   // 局部注册的组件
-  components: { AddOrUpdate, CommonControlCard, CommonSearchReset },
+  components: { AddOrUpdate, CommonControlCard, CommonSearchReset,RoleUser },
   // 组件状态值
   data() {
     return {
       addOrUpdateVisible: false,
+      roleUserVisible: false,
       param: {
         page: {
           page: 1,
@@ -172,6 +175,10 @@ export default {
     /** 分配用户操作 */
     handleAuthUser(row) {
       console.log(row)
+      this.roleUserVisible = true
+      this.$nextTick(() => {
+        this.$refs.roleUser.init({type:3,roleId:row.roleId,row})
+      })
     },
     addOrUpdateHandle(data) {
       this.addOrUpdateVisible = true
@@ -186,7 +193,6 @@ export default {
       })
     },
     onSearch() {
-      console.log('submit!');
       this.getRolePage()
     },
     getRolePage() {

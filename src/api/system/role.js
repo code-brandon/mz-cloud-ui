@@ -67,3 +67,34 @@ export const listRoleDept = (roleId) => {
     data: null
   })
 }
+
+export const getUserPage = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuserrole/getUserPage?${qs.stringify(param.page)}`,
+    method: 'post',
+    data: param.data
+  })
+}
+
+export const getNotThisRoleUserPage = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuserrole/getNotThisRoleUserPage?${qs.stringify(param.page)}`,
+    method: 'post',
+    data: param.data
+  })
+}
+export const saveRoleBindUser = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuserrole/save/roleBindUser`,
+    method: 'post',
+    data: param
+  })
+}
+
+export const deleteByRoleId = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuserrole/delete`,
+    method: 'delete',
+    data: param
+  })
+}

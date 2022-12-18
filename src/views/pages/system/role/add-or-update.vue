@@ -167,7 +167,6 @@ export default {
   methods: {
     init(data) {
       this.visible = true
-      this.fold = true
       this.pageType = data.type
       this.$nextTick(() => {
         this.initData()
