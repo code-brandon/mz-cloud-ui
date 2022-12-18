@@ -60,8 +60,7 @@
           </el-table-column>
           <el-table-column header-align="center" align="center" type="selection" width="55">
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" header-align="center" align="center" prop="nickName" label="昵称"
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" header-align="center" align="center" prop="nickName" label="昵称" min-width="100">
           </el-table-column>
           <el-table-column header-align="center" align="center" prop="username" label="账号" min-width="100">
           </el-table-column>
@@ -72,7 +71,7 @@
           <el-table-column header-align="center" align="center" prop="deptId" label="部门">
           </el-table-column>
           <el-table-column header-align="center" align="center" label="头像">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <div class="block">
                 <el-avatar shape="square" :size="40" :src="scope.row.avatar">
                   <img src="@/assets/images/ku.png" />
@@ -80,10 +79,10 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column header-align="center" align="center" prop="userType" label="类型">
+          <el-table-column header-align="center" align="center" prop="roleName" label="类型">
           </el-table-column>
           <el-table-column header-align="center" align="center" label="状态">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
                 <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" active-value="0"
                   inactive-value="1">
@@ -92,7 +91,7 @@
             </template>
           </el-table-column>
           <el-table-column header-align="center" align="center" fixed="right" label="操作" width="280">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.userId)">编辑
               </el-button>
               <el-popover popper-class="mz-popover" placement="top" width="110" trigger="hover">
@@ -143,7 +142,7 @@ export default {
       param: {
         page: {
           page: 1,
-          limit: 1
+          limit: 10
         },
         formInline: {
           deptId: null
@@ -160,19 +159,8 @@ export default {
   },
   // 组件方法
   methods: {
-    // handleSizeChange(val) {
-    //   console.log(`每页 ${val} 条`);
-    //   this.param.page.limit = val
-    //   this.getUserPage()
-    // },
-    // handleCurrentChange(val) {
-    //   console.log(`当前页: ${val}`);
-    //   this.param.page.page = val
-    //   this.getUserPage()
-    // },
     changePageReset(val){
       this.getUserPage()
-      console.log(val);
     },
     handleNodeClick(val, node, tree) {
       console.log(val, node, tree)
@@ -185,15 +173,12 @@ export default {
       this.getUserPage()
     },
     onSearch() {
-      console.log('submit!');
       this.getUserPage()
     },
     onReset() {
-      console.log('onReset!');
       this.$nextTick(() => {
         this.param.formInline.deptId = null;
         this.$refs.formInline.resetFields();
-        // this.param.formInline = {}
       })
     },
     // 重置密码

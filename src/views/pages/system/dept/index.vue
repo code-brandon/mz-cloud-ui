@@ -54,7 +54,7 @@
       <el-table-column
               label="状态"
               width="80">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tag :type="scope.row.status>0?'danger':'dark'"
                   effect="plain">
             {{ scope.row.status>0?'停用':'正常'}}
@@ -70,7 +70,7 @@
               fixed="right"
               label="操作"
               width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button type="text" icon="el-icon-edit" size="small">编辑</el-button>
           <el-button type="text" icon="el-icon-plus" size="small">添加</el-button>
           <el-popover

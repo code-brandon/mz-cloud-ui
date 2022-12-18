@@ -135,7 +135,7 @@
            label="状态"
            header-align="center"
            width="80">
-     <template slot-scope="scope">
+     <template v-slot="scope">
        <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
          <el-switch
                  v-model="scope.row.status"
@@ -186,7 +186,7 @@
            align="center"
            width="180"
            label="操作">
-     <template slot-scope="scope">
+     <template v-slot="scope">
        <el-button type="text" icon="el-icon-edit" size="small">编辑</el-button>
        <el-button type="text" icon="el-icon-plus" size="small">添加</el-button>
        <el-popover

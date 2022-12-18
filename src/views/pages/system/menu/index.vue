@@ -41,7 +41,7 @@
         width="180">
       </el-table-column>
       <el-table-column header-align="center" align="center" label="图标" width="60">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <i :class="'el-icon-' + scope.row.icon"></i>
         </template>
       </el-table-column>
@@ -50,27 +50,23 @@
       <el-table-column :show-overflow-tooltip="true" header-align="center" align="center" prop="perms" label="权限标识符">
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" header-align="center" align="center" prop="component" label="组件路径">
-        <!--<template slot-scope="scope">
-
-            {{ scope.row.component}}
-        </template>-->
       </el-table-column>
       <el-table-column header-align="center" align="center" label="状态" width="80">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tag :type="scope.row.status > 0 ? 'danger' : 'dark'" effect="plain">
             {{ scope.row.status > 0 ? '停用' : '正常' }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="显示状态" width="80">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tag :type="scope.row.visible > 0 ? 'danger' : 'dark'" effect="plain">
             {{ scope.row.visible > 0 ? '隐藏' : '显示' }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="缓存状态" width="80">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tag :type="scope.row.isCache > 0 ? 'danger' : 'dark'" effect="plain">
             {{ scope.row.isCache > 0 ? '不缓存' : '缓存' }}
           </el-tag>
@@ -80,7 +76,7 @@
         label="创建时间">
       </el-table-column>
       <el-table-column header-align="center" align="center" fixed="right" label="操作" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.menuId)">编辑
           </el-button>
           <el-button type="text" icon="el-icon-plus" size="small">添加</el-button>

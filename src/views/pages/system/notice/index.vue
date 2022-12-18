@@ -109,7 +109,7 @@
               header-align="center"
               align="center"
               label="公告状态">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
             <el-switch
                     v-model="scope.row.status"
@@ -160,7 +160,7 @@
               align="center"
               width="120"
               label="操作">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button type="text" icon="el-icon-edit" size="mini">编辑</el-button>
           <el-popover
                   popper-class="mz-popover"
