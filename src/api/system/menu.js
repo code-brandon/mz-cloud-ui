@@ -27,6 +27,22 @@ export const getMenuInfo = (menuId) => {
   })
 }
 
+export const saveMenu= (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysmenu/save`,
+    method: 'post',
+    data: param
+  })
+}
+
+export const updateMenu= (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysmenu/update`,
+    method: 'put',
+    data: param
+  })
+}
+
 export const getMenuListTree = (param) => {
   return axios.request({
     url: `${basePath}/admin/sysmenu/getMenuListTree?${qs.stringify(param.data)}`,

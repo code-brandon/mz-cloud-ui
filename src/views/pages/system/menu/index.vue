@@ -27,7 +27,7 @@
       </el-form-item>
     </el-form>
     <CommonControlCard @refresh="getMenuListTree">
-      <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addOrUpdateHandle()">
+      <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addOrUpdateHandle({type:0})">
         新增
       </el-button>
       <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">
@@ -42,7 +42,8 @@
       </el-table-column>
       <el-table-column header-align="center" align="center" label="图标" width="60">
         <template v-slot="scope">
-          <i :class="'el-icon-' + scope.row.icon"></i>
+          <!--<i :class="'el-icon-' + scope.row.icon"></i>-->
+          <i :class="scope.row.icon"></i>
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" prop="weight" width="60" label="排序">
@@ -77,9 +78,8 @@
       </el-table-column>
       <el-table-column header-align="center" align="center" fixed="right" label="操作" width="180">
         <template v-slot="scope">
-          <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.menuId)">编辑
-          </el-button>
-          <el-button type="text" icon="el-icon-plus" size="small">添加</el-button>
+          <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle({menuId:scope.row.menuId,type:1})">编辑</el-button>
+          <el-button type="text" icon="el-icon-plus" size="small" @click="addOrUpdateHandle({menuId:scope.row.menuId,type:2})">添加</el-button>
           <el-popover popper-class="mz-popover" placement="top" width="110" trigger="hover">
             <p>确定删除吗？</p>
             <div style="text-align: center; margin: 0">
@@ -140,14 +140,13 @@ export default {
         console.log(err)
       })
     },
-    addOrUpdateHandle(menuId) {
+    addOrUpdateHandle(data) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(menuId)
+        this.$refs.addOrUpdate.init(data)
       })
     },
     onReset() {
-      console.log('onReset!');
       this.$nextTick(() => {
         this.$refs.formInline.resetFields();
       })

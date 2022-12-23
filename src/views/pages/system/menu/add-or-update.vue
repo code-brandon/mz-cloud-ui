@@ -11,9 +11,9 @@
 -->
 <template>
   <el-dialog width="680px" :title="!dataForm.menuId ? '新增' : '修改'" :close-on-click-modal="false"
-    :visible.sync="visible">
+             :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
-      label-width="80px">
+             label-width="80px">
 
       <el-form-item label="父菜单ID" prop="parentId">
         <Treeselect v-model="dataForm.parentId" :show-count="true" :options="options" :normalizer="normalizer">
@@ -37,15 +37,15 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="显示顺序" prop="orderNum">
-            <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="0" />
+            <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="0"/>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
 
-        <el-col :span="12">
-          <el-form-item label="权限标识">
+        <el-col :span="12" v-if="dataForm.menuType !=='M'">
+          <el-form-item label="权限标识" prop="perms">
             <el-input v-model="dataForm.perms" placeholder="权限标识"></el-input>
           </el-form-item>
         </el-col>
@@ -62,17 +62,17 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="12" v-if="dataForm.menuType !=='F'">
+        <el-col :span="12" v-if="dataForm.menuType ==='C'">
           <el-form-item label="组件地址" prop="component">
             <el-input v-model="dataForm.component" placeholder="组件地址"></el-input>
           </el-form-item>
         </el-col>
 
-<!--        <el-col :span="12" v-if="dataForm.menuType ==='C'">
-          <el-form-item label="路由参数">
-            <el-input v-model="dataForm.query" placeholder="路由参数"></el-input>
-          </el-form-item>
-        </el-col>-->
+        <!--        <el-col :span="12" v-if="dataForm.menuType ==='C'">
+                  <el-form-item label="路由参数">
+                    <el-input v-model="dataForm.query" placeholder="路由参数"></el-input>
+                  </el-form-item>
+                </el-col>-->
 
         <el-col :span="12" v-if="dataForm.menuType !=='F'">
           <el-form-item label="是否外链" prop="isFrame">
@@ -98,6 +98,14 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
+        <el-col :span="12" v-else>
+          <el-form-item label="按钮状态" prop="status">
+            <el-radio-group v-model="dataForm.status">
+              <el-radio label="0">正常</el-radio>
+              <el-radio label="1">停用</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
         <el-col :span="12" v-if="dataForm.menuType ==='C'">
           <el-form-item label="是否缓存" prop="isCache">
             <el-radio-group v-model="dataForm.isCache">
@@ -108,8 +116,8 @@
         </el-col>
 
 
-        <el-col :span="12">
-          <el-form-item label="备注">
+        <el-col :span="22">
+          <el-form-item label="备注" prop="remark">
             <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
           </el-form-item>
         </el-col>
@@ -124,18 +132,19 @@
 </template>
 
 <script>
-import { getMenuTree, getMenuInfo } from '@/api/system/menu.js';
+import {getMenuTree, getMenuInfo, updateMenu, saveMenu} from '@/api/system/menu.js';
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 export default {
   // 组件名称
   name: 'menu-add-or-update',
   // 组件参数 接收来自父组件的数据
   props: {},
   // 局部注册的组件
-  components: { Treeselect },
+  components: {Treeselect},
   // 组件状态值
   data() {
     return {
@@ -147,8 +156,14 @@ export default {
         visible: "0",
         menuType: "M",
         parentId: 0,
-        status: "0"
-
+        status: "0",
+        menuName: '',
+        path:'',
+        component: '',
+        query:'',
+        perms:'',
+        icon:'',
+        remark:''
       },
       options: [
         {
@@ -170,51 +185,57 @@ export default {
       },
       dataRule: {
         menuName: [
-          { required: true, message: '菜单名称不能为空', trigger: 'blur' }
+          {required: true, message: '菜单名称不能为空', trigger: 'blur'}
         ],
         parentId: [
-          { required: true, message: '父菜单ID不能为空', trigger: 'blur' }
+          {required: true, message: '父菜单ID不能为空', trigger: 'blur'}
         ],
         orderNum: [
-          { required: true, message: '显示顺序不能为空', trigger: 'blur' }
+          {required: true, message: '显示顺序不能为空', trigger: 'blur'}
         ],
-        path: [
-          { required: true, message: '路由地址不能为空', trigger: 'blur' }
+        /*path: [
+          {required: true, message: '路由地址不能为空', trigger: 'blur'}
         ],
         component: [
-          { required: true, message: '组件地址不能为空', trigger: 'blur' }
-        ],
+          {required: true, message: '组件地址不能为空', trigger: 'blur'}
+        ],*/
         isFrame: [
-          { required: true, message: '是否为外链（0是 1否）不能为空', trigger: 'blur' }
+          {required: true, message: '是否为外链（0是 1否）不能为空', trigger: 'blur'}
         ],
         isCache: [
-          { required: true, message: '是否缓存（0缓存 1不缓存）不能为空', trigger: 'blur' }
+          {required: true, message: '是否缓存（0缓存 1不缓存）不能为空', trigger: 'blur'}
         ],
         menuType: [
-          { required: true, message: '菜单类型（M目录 C菜单 F按钮）不能为空', trigger: 'blur' }
+          {required: true, message: '菜单类型（M目录 C菜单 F按钮）不能为空', trigger: 'blur'}
         ],
         visible: [
-          { required: true, message: '菜单状态（0显示 1隐藏）不能为空', trigger: 'blur' }
+          {required: true, message: '菜单状态（0显示 1隐藏）不能为空', trigger: 'blur'}
         ],
         status: [
-          { required: true, message: '菜单状态（0正常 1停用）不能为空', trigger: 'blur' }
+          {required: true, message: '菜单状态（0正常 1停用）不能为空', trigger: 'blur'}
         ],
         icon: [
-          { required: true, message: '菜单图标不能为空', trigger: 'blur' }
+          {required: true, message: '菜单图标不能为空', trigger: 'blur'}
         ],
       }
     }
   },
   // 组件方法
   methods: {
-    init(menuId) {
-      this.dataForm.menuId = menuId || 0
-      this.visible = true
+    init(data) {
+      if (data.type === 2) {
+        this.dataForm.parentId = data.menuId;
+      } else {
+        this.dataForm.menuId = data.menuId;
+      }
+
+      this.visible = true;
       this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
+        if (this.$refs.dataForm !== undefined) {
+          this.$refs.dataForm.resetFields();
+        }
         if (this.dataForm.menuId) {
-          console.log(menuId)
-          getMenuInfo(menuId).then(({ data: res }) => {
+          getMenuInfo(data.menuId).then(({data: res}) => {
             this.dataForm = res.data;
           }).catch(err => {
             console.log(err)
@@ -223,12 +244,57 @@ export default {
       })
     },
     getMenuTree() {
-      getMenuTree().then(({ data: res }) => {
+      getMenuTree().then(({data: res}) => {
         this.options[0]["children"] = res.data;
       }).catch(err => {
         console.log(err)
       })
     },
+    // 表单提交
+    dataFormSubmit() {
+
+      /*
+      'menuId': this.dataForm.menuId || undefined,
+      'menuName': this.dataForm.menuName,
+      'parentId': this.dataForm.parentId,
+      'orderNum': this.dataForm.orderNum,
+      'path': this.dataForm.path,
+      'component': this.dataForm.component,
+      'query': this.dataForm.query,
+      'isFrame': this.dataForm.isFrame,
+      'isCache': this.dataForm.isCache,
+      'menuType': this.dataForm.menuType,
+      'visible': this.dataForm.visible,
+      'status': this.dataForm.status,
+      'perms': this.dataForm.perms,
+      'icon': this.dataForm.icon,
+      'createBy': this.dataForm.createBy,
+      'createTime': this.dataForm.createTime,
+      'updateBy': this.dataForm.updateBy,
+      'updateTime': this.dataForm.updateTime,
+      'remark': this.dataForm.remark
+       */
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          if (!this.dataForm.menuId) {
+            console.log(this.dataForm)
+            saveMenu({...this.dataForm}).then(({data:res}) => {
+              if (res && res.code === this.$OkCode) {
+                this.visible = false
+                this.$emit('refreshDataList')
+              }
+            })
+          } else {
+            updateMenu({...this.dataForm}).then(({data:res}) => {
+              if (res && res.code === this.$OkCode) {
+                this.visible = false
+                this.$emit('refreshDataList')
+              }
+            })
+          }
+        }
+      })
+    }
   },
   // 计算属性
   computed: {},
