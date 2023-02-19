@@ -17,7 +17,6 @@
       </el-form-item>
       <el-form-item label="角色状态" prop="status">
         <el-select v-model="param.data.status" placeholder="请选择状态">
-          <el-option label="全部" value=""></el-option>
           <el-option label="正常" value="0"></el-option>
           <el-option label="停用" value="1"></el-option>
         </el-select>
@@ -35,14 +34,13 @@
       </el-button>
     </CommonControlCard>
 
-    <el-table v-if="refreshTable" :data="tableData" style="width: 100%;margin-bottom: 20px;" row-key="id"
+    <el-table v-if="refreshTable" :data="tableData" style="width: 100%;margin-bottom: 20px;" row-key="menuId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column :show-overflow-tooltip="true" header-align="center" align="center" prop="menuName" label="菜单名称"
         width="180">
       </el-table-column>
       <el-table-column header-align="center" align="center" label="图标" width="60">
         <template v-slot="scope">
-          <!--<i :class="'el-icon-' + scope.row.icon"></i>-->
           <i :class="scope.row.icon"></i>
         </template>
       </el-table-column>
@@ -80,14 +78,7 @@
         <template v-slot="scope">
           <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle({menuId:scope.row.menuId,type:1})">编辑</el-button>
           <el-button type="text" icon="el-icon-plus" size="small" @click="addOrUpdateHandle({menuId:scope.row.menuId,type:2})">添加</el-button>
-          <el-popover popper-class="mz-popover" placement="top" width="110" trigger="hover">
-            <p>确定删除吗？</p>
-            <div style="text-align: center; margin: 0">
-              <el-button type="danger" round size="mini">确定</el-button>
-            </div>
-            <el-button style="margin-left: 10px" type="text" slot="reference" icon="el-icon-delete" size="small">删除
-            </el-button>
-          </el-popover>
+          <el-button style="margin-left: 10px" type="text" slot="reference" icon="el-icon-delete" size="small" @click="deleteMenu(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -98,7 +89,7 @@
 </template>
 
 <script>
-import { getMenuListTree } from '@/api/system/menu.js';
+import {getMenuListTree, deleteMenu} from '@/api/system/menu.js';
 import AddOrUpdate from './add-or-update'
 import CommonControlCard from '@/components/common/CommonControlCard';
 import CommonSearchReset from '@/components/common/CommonSearchReset';
@@ -119,7 +110,10 @@ export default {
       // 重新渲染表格状态
       refreshTable: true,
       param: {
-        data: {}
+        data: {
+          menuName:'',
+          status:'',
+        }
       },
     }
   },
@@ -145,6 +139,28 @@ export default {
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(data)
       })
+    },
+    deleteMenu(val){
+      if(!val){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
+      this.$confirm(`确定对[${val.menuName}]进行删除操作操作?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteMenu([val.menuId]).then(({ data: res }) => {
+          if (res && res.code === this.$OkCode) {
+            this.getMenuListTree();
+          }
+        }).catch(err => {
+          console.error(err)
+        })
+      }).catch(()=>{
+        this.$message.info(`取消删除[${val.menuName}]`);
+      })
+      
     },
     onReset() {
       this.$nextTick(() => {

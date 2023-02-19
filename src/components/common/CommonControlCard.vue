@@ -11,10 +11,10 @@
 -->
 <template>
   <el-row type="flex" class="row-control" justify="space-between">
-    <el-col :span="20" class="col-left">
+    <el-col :xs="15" :md="12" class="col-left">
       <slot></slot>
     </el-col>
-    <el-col :span="4" class="col-right">
+    <el-col :xs="9" :md="12" class="col-right">
       <el-tooltip :content="'隐藏搜搜'" placement="top">
         <el-button icon="el-icon-search" circle size="mini" @click="handleSearch"></el-button>
       </el-tooltip>

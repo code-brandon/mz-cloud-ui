@@ -50,8 +50,6 @@
       // 关闭单个标签
       closeTags(index) {
 
-        console.log(this.tagsList[index].path)
-
         bus.$emit("clearKeepAlive", this.tagsList[index].path); // 清除缓存
 
         const delItem = this.tagsList.splice(index, 1)[0];
@@ -85,7 +83,6 @@
           if(this.tagsList.length >= 8){
             this.tagsList.shift();
           }
-          console.log(route)
           this.tagsList.push({
             title: route.meta.title,
             path: route.fullPath,

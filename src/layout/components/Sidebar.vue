@@ -46,10 +46,8 @@
     },
     methods:{
       handleOpen(key, keyPath) {
-        console.log(key, keyPath);
       },
       handleClose(key, keyPath) {
-        console.log(key, keyPath);
       },
       filterMenus(item){
         let arr =  item.filter(to=>{
@@ -72,14 +70,12 @@
         let that = this;
         let menus = this.$store.state.tab.menus;
         let arr = that.filterMenus(menus);
-        console.log("arr:",arr)
         return arr;
       }
     },
     created() {
       // 通过 Event Bus 进行组件间通信，来折叠侧边栏
       bus.$on('collapse', msg => {
-        console.log(msg)
         this.collapse = msg;
       });
     }

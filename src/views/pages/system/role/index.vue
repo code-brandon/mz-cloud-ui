@@ -20,13 +20,12 @@
       </el-form-item>
       <el-form-item label="角色状态" prop="status">
         <el-select v-model="param.data.status" placeholder="请选择状态">
-          <el-option label="全部" value=""></el-option>
           <el-option label="启用" value="0"></el-option>
           <el-option label="禁用" value="1"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <CommonSearchReset @reset="onReset" @search="onSearch"></CommonSearchReset>
+        <CommonSearchReset @reset="onReset" @search="getRolePage"></CommonSearchReset>
       </el-form-item>
     </el-form>
 
@@ -35,7 +34,7 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addOrUpdateHandle({type:0})">
           新增
         </el-button>
-        <el-button type="danger" plain icon="el-icon-delete" size="mini">
+        <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="deleteRole()">
           删除
         </el-button>
         <el-button type="info" plain icon="el-icon-upload2" size="mini">
@@ -46,7 +45,7 @@
         </el-button>
       </template>
     </CommonControlCard>
-    <el-table :data="tableData.list" border style="width: 100%;">
+    <el-table :data="tableData.list" border style="width: 100%;" @selection-change="selectionChangeHandle">
       <el-table-column type="selection" header-align="center" align="center" width="50">
       </el-table-column>
       <el-table-column prop="roleId" header-align="center" align="center" label="角色ID">
@@ -63,7 +62,7 @@
         <template v-slot="scope">
           <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
             <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" active-value="0"
-              inactive-value="1">
+              inactive-value="1" @change="updateRoleStatus({sysId:scope.row.roleId,status:scope.row.status})">
             </el-switch>
           </el-tooltip>
         </template>
@@ -80,16 +79,8 @@
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
         <template v-slot="scope">
-          <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle({roleId:scope.row.roleId,type:1})">编辑
-          </el-button>
-          <el-popover popper-class="mz-popover" placement="top" width="110" trigger="hover">
-            <p>确定删除吗？</p>
-            <div style="text-align: center; margin: 0">
-              <el-button type="danger" round size="mini">确定</el-button>
-            </div>
-            <el-button style="margin-left: 10px" type="text" slot="reference" icon="el-icon-delete" size="small">删除
-            </el-button>
-          </el-popover>
+          <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle({roleId:scope.row.roleId,type:1})">编辑</el-button>
+          <el-button style="margin-left: 10px" type="text" slot="reference" icon="el-icon-delete" size="small" @click="deleteRole(scope.row)">删除</el-button>
           <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
             <span class="el-dropdown-link" style="font-size: 12px">
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
@@ -102,10 +93,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-      :current-page="tableData.currPage" :page-sizes="[10, 20, 30, 40]" :page-size="tableData.pageSize"
-      layout="total, sizes, prev, pager, next, jumper" background :total="tableData.totalCount">
-    </el-pagination>
+    <CommonPagination
+        :currPage.sync="tableData.currPage"
+        :pageSize.sync="tableData.pageSize"
+        :totalCount.sync="tableData.totalCount"
+        :page="param.page"
+        @pageReset="getRolePage">
+    </CommonPagination>
     <!-- 弹窗, 新增 / 修改 -->
     <AddOrUpdate v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getRolePage"></AddOrUpdate>
     <RoleUser v-if="roleUserVisible" ref="roleUser" @refreshDataList="getRolePage"></RoleUser>
@@ -113,18 +107,19 @@
 </template>
 
 <script>
-import { getRolePage } from '@/api/system/role.js';
+import { getRolePage,deleteRole,updateRoleStatus } from '@/api/system/role.js';
 import AddOrUpdate from './add-or-update'
 import RoleUser from './role-user.vue'
 import CommonControlCard from '@/components/common/CommonControlCard';
 import CommonSearchReset from '@/components/common/CommonSearchReset';
+import CommonPagination from '@/components/common/CommonPagination';
 export default {
   // 组件名称
   name: 'Role',
   // 组件参数 接收来自父组件的数据
   props: {},
   // 局部注册的组件
-  components: { AddOrUpdate, CommonControlCard, CommonSearchReset,RoleUser },
+  components: { AddOrUpdate, CommonControlCard, CommonSearchReset,CommonPagination,RoleUser },
   // 组件状态值
   data() {
     return {
@@ -135,21 +130,21 @@ export default {
           page: 1,
           limit: 10
         },
-        data:{}
+        data:{
+          roleName:'',
+          roleKey:'',
+          status:'',
+        }
       },
       tableData: {},
+      dataListSelections:[],
     }
   },
   // 组件方法
   methods: {
-    handleClick(row) {
-      console.log(row);
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+    // 多选
+    selectionChangeHandle(val) {
+      this.dataListSelections = val
     },
     // 更多操作触发
     handleCommand(command, row) {
@@ -187,20 +182,48 @@ export default {
       })
     },
     onReset() {
-      console.log('onReset!');
       this.$nextTick(() => {
         this.$refs.formInline.resetFields();
       })
     },
-    onSearch() {
-      this.getRolePage()
-    },
     getRolePage() {
       getRolePage(this.param).then(({ data: res }) => {
-        console.log(res)
         this.tableData = res.data
       }).catch(error => {
         console.log(error)
+      })
+    },
+    updateRoleStatus(val){
+      updateRoleStatus(val).then(({ data: res }) => {
+        if (res.code === this.$OkCode) {
+          this.getRolePage()
+        }
+      }).catch(error => {
+        console.error(error)
+      })
+    },
+    deleteRole(val) {
+      var ids = val ? [val.roleId] : this.dataListSelections.map(item => {
+        return item.roleId
+      })
+      if(ids.length == 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
+      this.$confirm(`${val ? `确定对[${val.roleName}]进行删除操作` : `确定对[id=${ids.join(',')}]进行批量删除`}操作?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteRole(ids).then(({ data: res }) => {
+          if (res && res.code === this.$OkCode) {
+            this.getRolePage()
+          }
+        }).catch(error => {
+          console.error(error)
+        })
+      }).catch(()=>{
+        this.$message.info(`取消${val ? `删除[${val.roleName}]` : '批量删除'}`);
       })
     },
   },

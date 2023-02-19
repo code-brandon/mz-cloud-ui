@@ -176,7 +176,7 @@ export default {
             this.dataForm = res.data;
             this.$refs.menuTree.setCheckedKeys(this.dataForm.menuIds);
           }).catch(error => {
-            console.log(error)
+            console.error(error)
           })
         }
         if (this.pageType == 2) {
@@ -185,8 +185,6 @@ export default {
           getDeptTree().then(({ data: res }) => {
             this.deptsDataTree = res.data;
             listRoleDept(data.roleId).then(({ data: res }) => {
-
-              console.log(res);
               if (res.code == this.$OkCode) {
                 let deptIds = []
                 res.data.forEach(item => {
@@ -198,10 +196,10 @@ export default {
               }
 
             }).catch(error => {
-              console.log(error);
+              console.error(error);
             })
           }).catch(error => {
-            console.log(error);
+            console.error(error);
           })
         }
       })
@@ -235,38 +233,35 @@ export default {
     dataFormSubmit() {
       if (this.pageType == 0) {
         saveRoleMenu(this.dataForm).then(({ data: res }) => {
-          console.log(res);
           if (res.code == this.$OkCode) {
             this.visible = false
             this.$emit('refreshDataList')
           }
         }).catch(error => {
-          console.log(error)
+          console.error(error)
         })
       }
       if (this.pageType == 1) {
         this.dataForm.menuIds = this.getCheckedNodes
         updateRoleMenu(this.dataForm).then(({ data: res }) => {
-          console.log(res);
           if (res.code == this.$OkCode) {
             this.visible = false
             this.$emit('refreshDataList')
           }
         }).catch(error => {
-          console.log(error)
+          console.error(error)
         })
       }
       if (this.pageType == 2) {
 
         let tempParam = { roleId: this.dataForm.roleId, deptCheckStrictly: this.dataForm.deptCheckStrictly, dataScope: this.dataForm.dataScope, deptIds: this.getCheckedNodes }
         saveRoleDept(tempParam).then(({ data: res }) => {
-          console.log(res);
           if (res.code == this.$OkCode) {
             this.visible = false
           }
 
         }).catch(error => {
-          console.log(error);
+          console.error(error);
         })
       }
     },

@@ -24,26 +24,12 @@
     // 组件状态值
     data() {
       return {
-        isCollapse: false,
-        adminTitle: '小政后台管理'
+        
       }
     },
     // 组件方法
     methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleShrink(){
-          this.isCollapse = !this.isCollapse
-          if (this.isCollapse){
-            this.adminTitle = '小政'
-          }else {
-            this.adminTitle = '小政后台管理'
-          }
-      }
+      
     },
     // 计算属性
     computed: {},
@@ -144,59 +130,5 @@
 <!--然而子组件的根节点元素会同时被设置了scoped的父css样式和设置了scoped的子css样式影响，-->
 <!--这么设计的目的是父组件可以对子组件根元素进行布局。-->
 <style lang="less" scoped>
-  .el-header, .el-footer {
-    background-color: #B3C0D1;
-    color: #333;
-    /*text-align: center;*/
-    line-height: 54px;
-  }
-
-  .header-left-ul{
-    display: flex;
-  }
-
-  .tables-column{
-    height: 35px;
-    line-height: 35px;
-    background-color: rgb(255, 255, 255);
-  }
-
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    /*text-align: center;*/
-    /*line-height: 200px;*/
-    height: calc(100vh - 0px);
-    .admin-title{
-      display: block;
-      padding: 10px 0;
-      margin: auto;
-      font-weight: bold;
-      font-size: 30px;
-      font-family: fangsong;
-    }
-  }
-
-  .el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    /*line-height: 160px;*/
-  }
-
-  body > .el-container {
-    margin-bottom: 40px;
-  }
-
-  .el-container:nth-child(5) .el-aside,
-  .el-container:nth-child(6) .el-aside {
-    line-height: 260px;
-  }
-
-  .el-container:nth-child(7) .el-aside {
-    line-height: 320px;
-  }
-  .el-menu{
-    height: 100%;
-  }
+  
 </style>

@@ -22,7 +22,6 @@
         </el-form-item>
         <el-form-item label="用户状态" prop="status">
           <el-select v-model="param.data.status" placeholder="用户状态">
-            <el-option label="正常" value="0"></el-option>
             <el-option label="停用" value="1"></el-option>
             <el-option label="全部" value=""></el-option>
           </el-select>
@@ -32,7 +31,7 @@
         </el-form-item>
       </el-form>
 
-      <CommonControlCard >
+      <CommonControlCard @refresh="getUserPage">
         <template>
           <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addHandle()">
             新增
@@ -75,21 +74,14 @@
             <template v-slot="scope">
               <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
                 <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" active-value="0"
-                  inactive-value="1">
+                  inactive-value="1" disabled>
                 </el-switch>
               </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column header-align="center" align="center" fixed="right" label="操作" width="90">
             <template v-slot="scope">
-              <el-popover popper-class="mz-popover" placement="top" width="110" trigger="hover">
-                <p>确定解除吗？</p>
-                <div style="text-align: center; margin: 0">
-                  <el-button type="danger" round size="mini" @click="deleteByRoleId(scope.row.userId)">确定</el-button>
-                </div>
-                <el-button type="text" slot="reference" icon="el-icon-delete" size="mini">解除授权
-                </el-button>
-              </el-popover>
+              <el-button type="text" slot="reference" icon="el-icon-delete" size="mini" @click="deleteByRoleId(scope.row)">解除授权</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -97,7 +89,7 @@
         :pageSize.sync="tableData.pageSize" 
         :totalCount.sync="tableData.totalCount" 
         :page="param.page" 
-        @pageReset="changePageReset"></CommonPagination>
+        @pageReset="getUserPage"></CommonPagination>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="visible = false">关闭</el-button>
@@ -134,7 +126,11 @@ export default {
         page: 1,
         limit: 10
       },
-      data:{}
+      data: {
+        username: '',
+        phonenumber: '',
+        status: '',
+      }
     }
    }
   },
@@ -163,12 +159,8 @@ export default {
         this.$refs.formInline.resetFields();
       })
     },
-    changePageReset(){
-      this.getUserPage()
-    },
     getUserPage(){
       getUserPage(this.param).then(({ data: res }) => {
-        console.log(res)
         this.tableData = res.data
       }).catch(error => {
         console.log(error)
@@ -178,19 +170,27 @@ export default {
       this.dataListSelections = val
     },
     deleteByRoleId(val){
-      let ids = val ? [val] : this.dataListSelections.map(item => {
+      let ids = val ? [val.userId] : this.dataListSelections.map(item => {
         return item.userId
       })
       if (ids && !ids.length > 0) {
         this.$message.error('请选择解除的用户');
         return
       }
-      deleteByRoleId({roleId:this.param.data.roleId,userIds:ids}).then(({ data: res }) => {
-        if (res.code === this.$OkCode) {
-          this.getUserPage();
-        }
-      }).catch(error => {
-        console.log(error)
+      this.$confirm(`${val ? `确定对[${val.username}]进行解除操作` : `确定对[id=${ids.join(',')}]进行批量解除`}操作?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteByRoleId({ roleId: this.param.data.roleId, userIds: ids }).then(({ data: res }) => {
+          if (res.code === this.$OkCode) {
+            this.getUserPage();
+          }
+        }).catch(error => {
+          console.error(error)
+        })
+      }).catch(()=>{
+        this.$message.info(`取消${val ? `解除[${val.username}]` : '批量解除'}`);
       })
     }
   },

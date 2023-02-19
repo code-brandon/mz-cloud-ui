@@ -13,25 +13,25 @@
   <div>
 
     <el-form :inline="true" size="small" :model="param.data" ref="formInline" class="demo-form-inline" label-width="68px">
-      <el-form-item label="岗位名称" prop="postName">
-        <el-input v-model="param.data.postName" placeholder="岗位名称"></el-input>
+      <el-form-item label="参数名称" prop="postName">
+        <el-input v-model="param.data.configName" placeholder="参数名称"></el-input>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="param.data.status" placeholder="请选择状态">
-          <el-option label="正常" value="0"></el-option>
-          <el-option label="停用" value="1"></el-option>
+      <el-form-item label="配置类型" prop="status">
+        <el-select v-model="param.data.configType" placeholder="配置类型">
+          <el-option label="正常" value="N"></el-option>
+          <el-option label="停用" value="Y"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <CommonSearchReset @reset="onReset" @search="getPostPage"></CommonSearchReset>
+        <CommonSearchReset @reset="onReset" @search="getConfigPage"></CommonSearchReset>
       </el-form-item>
     </el-form>
 
-    <CommonControlCard @refresh="getPostPage">
+    <CommonControlCard @refresh="getConfigPage">
       <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addOrUpdateHandle()">
         新增
       </el-button>
-      <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="deletePost()">
+      <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="deleteConfig()">
         删除
       </el-button>
       <el-button type="info" plain icon="el-icon-upload2" size="mini">
@@ -45,19 +45,19 @@
     <el-table :data="tableData.list" border style="width: 100%;" @selection-change="selectionChangeHandle">
       <el-table-column type="selection" header-align="center" align="center" width="50">
       </el-table-column>
-      <el-table-column prop="postId" header-align="center" align="center" label="岗位ID">
+      <el-table-column prop="configId" header-align="center" align="center" label="参数ID">
       </el-table-column>
-      <el-table-column prop="postCode" header-align="center" align="center" label="岗位编码">
+      <el-table-column prop="configName" header-align="center" align="center" label="参数名称">
       </el-table-column>
-      <el-table-column prop="postName" header-align="center" align="center" label="岗位名称">
+      <el-table-column prop="configKey" header-align="center" align="center" label="参数键名">
       </el-table-column>
-      <el-table-column prop="postSort" header-align="center" align="center" label="显示顺序">
+      <el-table-column prop="configValue" header-align="center" align="center" label="参数键值">
       </el-table-column>
-      <el-table-column label="状态" header-align="center" width="80">
+      <el-table-column label="系统内置" header-align="center" width="80">
         <template v-slot="scope">
-          <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
-            <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" active-value="0"
-              inactive-value="1" @change="updatePostStatus({sysId:scope.row.postId,status:scope.row.status})">
+          <el-tooltip :content="'Switch value: ' + scope.row.configType" placement="top">
+            <el-switch v-model="scope.row.configType" active-color="#13ce66" inactive-color="#ff4949" active-value="Y"
+              inactive-value="N" @change="updateConfig({configId:scope.row.configId,configType:scope.row.configType})">
             </el-switch>
           </el-tooltip>
         </template>
@@ -74,30 +74,30 @@
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
         <template v-slot="scope">
-          <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.postId)">编辑</el-button>
-          <el-button type="text" icon="el-icon-delete" size="small" @click="deletePost(scope.row)">删除</el-button>
+          <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.configId)">编辑</el-button>
+          <el-button type="text" icon="el-icon-delete" size="small" @click="deleteConfig(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <CommonPagination :currPage.sync="tableData.currPage" :pageSize.sync="tableData.pageSize"
-      :totalCount.sync="tableData.totalCount" :page="param.page" @pageReset="getPostPage">
+      :totalCount.sync="tableData.totalCount" :page="param.page" @pageReset="getConfigPage">
     </CommonPagination>
 
     <!-- 弹窗, 新增 / 修改 -->
-    <AddOrUpdate v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getPostPage"></AddOrUpdate>
+    <AddOrUpdate v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getConfigPage"></AddOrUpdate>
   </div>
 </template>
 
 <script>
-import { getPostPage,updatePostStatus } from '@/api/system/post'
+import { getConfigPage,deleteConfig} from '@/api/system/config'
 import AddOrUpdate from './add-or-update'
 import CommonControlCard from '@/components/common/CommonControlCard';
 import CommonSearchReset from '@/components/common/CommonSearchReset';
 import CommonPagination from "@/components/common/CommonPagination";
 export default {
   // 组件名称
-  name: 'Post',
+  name: 'Config',
   // 组件参数 接收来自父组件的数据
   props: {},
   // 局部注册的组件
@@ -112,8 +112,8 @@ export default {
           limit: 10
         },
         data:{
-          postName:'',
-          status:'',
+          configType:'',
+          configName:'',
         }
       },
       tableData: [],
@@ -130,14 +130,14 @@ export default {
     selectionChangeHandle(val) {
       this.dataListSelections = val
     },
-    addOrUpdateHandle(postId) {
+    addOrUpdateHandle(configId) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(postId)
+        this.$refs.addOrUpdate.init(configId)
       })
     },
-    getPostPage() {
-      getPostPage(this.param).then(({ data: res }) => {
+    getConfigPage() {
+      getConfigPage(this.param).then(({ data: res }) => {
         if (res.code === this.$OkCode) {
           this.tableData = res.data
         }
@@ -145,34 +145,34 @@ export default {
         console.error(error)
       })
     },
-    deletePost(val) {
-      var ids = val ? [val.postId] : this.dataListSelections.map(item => {
-        return item.postId
+    deleteConfig(val) {
+      var ids = val ? [val.configId] : this.dataListSelections.map(item => {
+        return item.configId
       })
       if(ids.length == 0){
         this.$message.error("请选择要删除的数据")
         return
       }
-      this.$confirm(`${val ? `确定对[${val.postName}]进行删除操作` : `确定对[id=${ids.join(',')}]进行批量删除`}操作?`, '提示', {
+      this.$confirm(`${val ? `确定对[${val.configName}]进行删除操作` : `确定对[id=${ids.join(',')}]进行批量删除`}操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deletePost(ids).then(({ data: res }) => {
+        deleteConfig(ids).then(({ data: res }) => {
           if (res && res.code === this.$OkCode) {
-            this.getPostPage()
+            this.getConfigPage()
           }
         }).catch(error => {
           console.error(error)
         })
       }).catch(()=>{
-        this.$message.info(`取消${val ? `删除[${val.postName}]` : '批量删除'}`);
+        this.$message.info(`取消${val ? `删除[${val.configName}]` : '批量删除'}`);
       })
     },
     updatePostStatus(val){
       updatePostStatus(val).then(({ data: res }) => {
         if (res.code === this.$OkCode) {
-          this.getPostPage()
+          this.getConfigPage()
         }
       }).catch(error => {
         console.error(error)
@@ -199,7 +199,7 @@ export default {
    * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
    */
   created() {
-    this.getPostPage();
+    this.getConfigPage();
   },
   /**
    * 在挂载开始之前被调用：相关的 render 函数首次被调用。

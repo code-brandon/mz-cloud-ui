@@ -126,7 +126,6 @@
       //获取屏幕尺寸
       this.screenWidth = document.body.clientWidth
       window.onresize = () => {
-        console.log('高度');
         //屏幕尺寸变化
         return (() => {
           this.screenWidth = document.body.clientWidth
@@ -136,7 +135,6 @@
     },
     watch: {
       screenWidth: function (n, o) {
-        console.log(`屏幕大小：${n}px`)
         if (n < 1500) {
           this.collapseEmit( true);
         } else {
@@ -148,7 +146,7 @@
 </script>
 <style lang="less" scoped>
   .header {
-    overflow: hidden;
+    // overflow: hidden;
     position: relative;
     box-sizing: border-box;
     width: 100%;
@@ -163,9 +161,9 @@
     padding: 0 10px;
     cursor: pointer;
   }
-  .header .logo {
-    width: 250px;
-  }
+  // .header .logo {
+  //   width: 250px;
+  // }
   .header-left{
     display: flex;
     align-items: center;

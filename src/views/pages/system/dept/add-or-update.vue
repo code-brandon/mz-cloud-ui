@@ -81,8 +81,7 @@
 </template>
 
 <script>
-  import { getDeptTree} from '@/api/system/dept.js';
-  import { getUserInfo} from '@/api/system/user.js';
+  import {getDeptTree, saveDept, updateDept, getDeptInfo} from '@/api/system/dept.js';
   // import the component
   import Treeselect from '@riophae/vue-treeselect'
   // import the styles
@@ -107,12 +106,7 @@
           leader: '',
           phone: '',
           email: '',
-          status: '0',
-          delFlag: '',
-          createBy: '',
-          createTime: '',
-          updateBy: '',
-          updateTime: ''
+          status: '0'
         },
         options:[],
         /** 转换菜单数据结构 */
@@ -156,13 +150,17 @@
     },
     // 组件方法
     methods: {
-      init (deptId) {
-        this.dataForm.deptId = deptId
+      init (data) {
+        if (data.type === 2) {
+          this.dataForm.parentId = data.deptId;
+        } else {
+          this.dataForm.deptId = data.deptId
+        }
         this.visible = true
         this.$nextTick(() => {
           this.$refs.dataForm.resetFields()
           if (this.dataForm.deptId) {
-            getUserInfo(deptId).then(({data:res})=>{
+            getDeptInfo(data.deptId).then(({data:res})=>{
               this.dataForm = res.data;
             }).catch(error=>{
               console.log(error)
@@ -180,6 +178,28 @@
       changeDeptChannel(){
         this.$refs.dataForm.validateField('deptId')
       },
+      // 表单提交
+      dataFormSubmit() {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            if (!this.dataForm.deptId) {
+              saveDept({...this.dataForm}).then(({data:res}) => {
+                if (res && res.code === this.$OkCode) {
+                  this.visible = false
+                  this.$emit('refreshDataList')
+                }
+              })
+            } else {
+              updateDept({...this.dataForm}).then(({data:res}) => {
+                if (res && res.code === this.$OkCode) {
+                  this.visible = false
+                  this.$emit('refreshDataList')
+                }
+              })
+            }
+          }
+        })
+      }
     },
     // 计算属性
     computed: {},

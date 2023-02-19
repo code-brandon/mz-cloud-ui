@@ -43,6 +43,14 @@ export const updateMenu= (param) => {
   })
 }
 
+export const deleteMenu= (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysmenu/delete`,
+    method: 'delete',
+    data: param
+  })
+}
+
 export const getMenuListTree = (param) => {
   return axios.request({
     url: `${basePath}/admin/sysmenu/getMenuListTree?${qs.stringify(param.data)}`,

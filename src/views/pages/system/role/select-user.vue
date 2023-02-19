@@ -21,7 +21,7 @@
           <el-input v-model="param.data.phonenumber" placeholder="手机号码"></el-input>
         </el-form-item>
         <el-form-item>
-          <CommonSearchReset @search="getNotThisRoleUserPage"></CommonSearchReset>
+          <CommonSearchReset @reset="onReset" @search="getNotThisRoleUserPage"></CommonSearchReset>
         </el-form-item>
       </el-form>
       <el-table :data="tableData.list" border
@@ -56,7 +56,7 @@
             <template v-slot="scope">
               <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
                 <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" active-value="0"
-                  inactive-value="1">
+                  inactive-value="1" disabled>
                 </el-switch>
               </el-tooltip>
             </template>
@@ -66,7 +66,7 @@
         :pageSize.sync="tableData.pageSize" 
         :totalCount.sync="tableData.totalCount" 
         :page="param.page" 
-        @pageReset="changePageReset"></CommonPagination>
+        @pageReset="getNotThisRoleUserPage"></CommonPagination>
 
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveRoleBindUser">确定</el-button>
@@ -92,18 +92,21 @@ export default {
   components: {CommonSearchReset,CommonPagination},
   // 组件状态值
   data () {
-   return {
-     visible: false,
-     tableData: Object,
-     dataListSelections: [],
-     param: {
-       page: {
-        page: 1,
-        limit: 10
-      },
-      data:{}
+    return {
+      visible: false,
+      tableData: Object,
+      dataListSelections: [],
+      param: {
+        page: {
+          page: 1,
+          limit: 10
+        },
+        data: {
+          username: '',
+          phonenumber: '',
+        }
+      }
     }
-   }
   },
   // 计算属性
   computed: {},
@@ -118,8 +121,10 @@ export default {
         this.getNotThisRoleUserPage();
       });
     },
-    changePageReset(){
-      this.getNotThisRoleUserPage()
+    onReset(){
+      this.$nextTick(() => {
+        this.$refs.formInline.resetFields();
+      })
     },
     getNotThisRoleUserPage(){
       getNotThisRoleUserPage(this.param).then(({ data: res }) => {
@@ -130,7 +135,6 @@ export default {
     },
     selectionChangeHandle(val){
       this.dataListSelections = val
-      console.log(val)
     },
     saveRoleBindUser(){
       let ids =  this.dataListSelections.map(item => {

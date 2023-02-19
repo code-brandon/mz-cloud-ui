@@ -1,6 +1,6 @@
 <template>
   <el-container class="layout-main">
-    <vSidebar> </vSidebar>
+    <vSidebar class="hidden-sm-and-down"> </vSidebar>
     <el-container class="layout-body">
       <vHead>Header</vHead>
       <div class="content-box">
@@ -43,7 +43,6 @@
     },
     computed:{
       fullPath() {
-        console.log(this.$route.fullPath);
         return this.$route.fullPath;
       },
     },

@@ -45,7 +45,6 @@ class HttpRequest {
     instance.interceptors.request.use(function (config) {
       // 在请求被发送之前做些什么
 
-      // console.log("headers:",config.headers);
       // 是否需要设置 token
       const isToken = (config.headers || {}).isToken === false
       // 是否需要防止数据重复提交
@@ -68,7 +67,7 @@ class HttpRequest {
     // 添加响应拦截器
     instance.interceptors.response.use(function (response) {
 
-      if (response.data.code > 15000 && response.data.code < 20000 ) {
+      if (response.data.code >= 15000 && response.data.code < 20000 ) {
 
         if (response.data.code === 15004 && !response.config.url.includes('oauth/token','login','auth/logout')) {
           if (!isRelogin.show) {
@@ -93,7 +92,7 @@ class HttpRequest {
         }
 
       }else if (response.status === 200) {
-        if (response.data.code === 1) {
+        if (response.data.code === store._vm.$FailCode) {
           Message({
             title: "失败",
             message: response.data.message,
@@ -109,13 +108,22 @@ class HttpRequest {
           });
           return Promise.reject(response.data.message);
         }
-        if (response.data.code === 0) {
+        if (response.data.code === store._vm.$OkCode) {
           Notification({
             title: '成功',
             message: '这是一条成功的提示消息',
             type: 'success',
             duration: 1500
           });
+        }
+
+        if (response.data.code >= 10000 && response.data.code < 13000) {
+          Message({
+            title: "错误",
+            message: response.data.message,
+            type: "error"
+          });
+          return Promise.reject(response.data.message);
         }
       }
       // 对响应数据做些什么

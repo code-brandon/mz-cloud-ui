@@ -77,8 +77,8 @@
         <el-col :span="12" v-if="dataForm.menuType !=='F'">
           <el-form-item label="是否外链" prop="isFrame">
             <el-radio-group v-model="dataForm.isFrame">
-              <el-radio label="0">是</el-radio>
-              <el-radio label="1">否</el-radio>
+              <el-radio :label="0">是</el-radio>
+              <el-radio :label="1">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -151,7 +151,7 @@ export default {
       visible: false,
       dataForm: {
         orderNum: 0,
-        isFrame: "1",
+        isFrame: 1,
         isCache: "0",
         visible: "0",
         menuType: "M",
@@ -252,28 +252,6 @@ export default {
     },
     // 表单提交
     dataFormSubmit() {
-
-      /*
-      'menuId': this.dataForm.menuId || undefined,
-      'menuName': this.dataForm.menuName,
-      'parentId': this.dataForm.parentId,
-      'orderNum': this.dataForm.orderNum,
-      'path': this.dataForm.path,
-      'component': this.dataForm.component,
-      'query': this.dataForm.query,
-      'isFrame': this.dataForm.isFrame,
-      'isCache': this.dataForm.isCache,
-      'menuType': this.dataForm.menuType,
-      'visible': this.dataForm.visible,
-      'status': this.dataForm.status,
-      'perms': this.dataForm.perms,
-      'icon': this.dataForm.icon,
-      'createBy': this.dataForm.createBy,
-      'createTime': this.dataForm.createTime,
-      'updateBy': this.dataForm.updateBy,
-      'updateTime': this.dataForm.updateTime,
-      'remark': this.dataForm.remark
-       */
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           if (!this.dataForm.menuId) {

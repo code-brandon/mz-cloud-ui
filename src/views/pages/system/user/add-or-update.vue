@@ -151,10 +151,6 @@ export default {
         delFlag: '',
         loginIp: '',
         loginDate: '',
-        createBy: '',
-        createTime: '',
-        updateBy: '',
-        updateTime: '',
         remark: ''
       },
       deptTrees: [],

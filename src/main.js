@@ -6,6 +6,7 @@ import ElementUI from 'element-ui';
 import Axios from 'axios'
 
 import 'element-ui/lib/theme-chalk/index.css';
+import 'element-ui/lib/theme-chalk/display.css';
 
 import "hover.css";
 import './assets/comm-less/index.less'
@@ -50,6 +51,11 @@ import VueKinesis from "vue-kinesis";
 //https://github.com/scaccogatto/vue-waypoint/tree/vue2
 import VueWaypoint from 'vue-waypoint'
 
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+// use
+Vue.use(mavonEditor)
+
 // Waypoint plugin
 Vue.use(VueWaypoint)
 
@@ -62,6 +68,7 @@ Vue.component('VueStar', VueStar)
 Vue.prototype.$http = Axios;
 
 Vue.prototype.$OkCode = 0;
+Vue.prototype.$FailCode = 1;
 
 Vue.use(VuePageTransition)
 

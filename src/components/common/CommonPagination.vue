@@ -11,7 +11,7 @@
 -->
 <template>
   <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-    :current-page="currPage" :page-sizes="[1, 5, 30, 40]" :page-size="pageSize"
+    :current-page="currPage" :page-sizes="[10, 50, 100, 200]" :page-size="pageSize"
     layout="total, sizes, prev, pager, next, jumper" background :total="totalCount">
   </el-pagination>
 </template>
@@ -47,12 +47,10 @@ export default {
   // 组件方法
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.page.limit = val
       this.changeReset()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.page.page = val
       this.changeReset()
     },

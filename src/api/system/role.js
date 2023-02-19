@@ -35,6 +35,13 @@ export const updateRole = (param) => {
   })
 }
 
+export const updateRoleStatus = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysrole/update/status`,
+    method: 'put',
+    data: param
+  })
+}
 
 export const saveRoleMenu = (param) => {
   return axios.request({
@@ -52,9 +59,17 @@ export const updateRoleMenu = (param) => {
   })
 }
 
+export const deleteRole= (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysrole/delete`,
+    method: 'delete',
+    data: param
+  })
+}
+
 export const saveRoleDept = (param) => {
   return axios.request({
-    url: `${basePath}/admin/sysroledept/saveRoleDept`,
+    url: `${basePath}/admin/sysroledept/save`,
     method: 'post',
     data: param
   })

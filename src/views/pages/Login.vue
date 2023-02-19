@@ -19,10 +19,10 @@
             class="login_container">
       <h3 class="login_title">Mz后台系统登录</h3>
       <el-row type="flex">
-        <el-col :span="12">
+        <el-col class="hidden-xs-only" :span="12">
           <img style="width: 100%" src="@/assets/images/dttbangong.png"></img>
         </el-col>
-        <el-col :span="12" style="    margin: auto 0;">
+        <el-col :xs="24" :span="12" style="    margin: auto 0;">
           <el-row>
             <el-col>
               <el-form-item
@@ -74,7 +74,10 @@
     data() {
       return {
         imageUrl:'',
-        formData: {},
+        formData: {
+          username:"test",
+          password:"123456"
+        },
         // 校验
         rules: {
           username: [
@@ -117,7 +120,6 @@
               console.log(error)
             })
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
@@ -140,7 +142,7 @@
         let url = this.imageUrl;
         if (!url) return `--bgImageUrl:url(${url})`
         url = url.substr(0, url.indexOf('&'));
-        url = url.substring(0, url.lastIndexOf('_')) + '_UHD.jpg';
+        url = "/biying"+url.substring(0, url.lastIndexOf('_')) + '_UHD.jpg';
         return `--bgImageUrl:url(${url})`
       }
     },
@@ -221,7 +223,7 @@
 <style lang="less" >
 
   .login_form{
-    min-width: 550px;
+    // min-width: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -248,7 +250,7 @@
     background-clip: padding-box;
     width: 750px;
     padding: 40px;
-    background-color: #fff6;
+    background-color: #ffffffe0;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
     box-sizing: border-box;

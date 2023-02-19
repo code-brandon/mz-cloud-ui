@@ -34,7 +34,7 @@ export const getUserPage = (param) => {
   return axios.request({
     url: `${basePath}/admin/sysuser/page?page=${param.page.page}&limit=${param.page.limit}`,
     method: 'post',
-    data: param.formInline
+    data: param.data
   })
 }
 
@@ -57,6 +57,22 @@ export const updateUser = (param) => {
   return axios.request({
     url: `${basePath}/admin/sysuser/update`,
     method: 'put',
+    data: param
+  })
+}
+
+export const updateUserStatus = (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuser/update/status`,
+    method: 'put',
+    data: param
+  })
+}
+
+export const deleteUser= (param) => {
+  return axios.request({
+    url: `${basePath}/admin/sysuser/delete`,
+    method: 'delete',
     data: param
   })
 }

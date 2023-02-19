@@ -44,7 +44,6 @@ export default {
 
       return  new Promise((resolve, reject) => {
         login({username, password, code, uuid}).then(({data:res}) => {
-          console.log(res)
           if (res.code === 0) {
             commit('SET_TOKEN', res.data);
           }

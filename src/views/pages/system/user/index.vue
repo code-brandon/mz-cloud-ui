@@ -19,22 +19,21 @@
       </el-col>
       <el-col :xs="24" :md="18" :lg="21" :xl="21">
 
-        <el-form :inline="true" size="small" ref="formInline" :model="param.formInline" class="demo-form-inline">
+        <el-form :inline="true" size="small" ref="formInline" :model="param.data" class="demo-form-inline">
           <el-form-item label="用户账号" prop="username">
-            <el-input v-model="param.formInline.username" placeholder="用户账号"></el-input>
+            <el-input v-model="param.data.username" placeholder="用户账号"></el-input>
           </el-form-item>
           <el-form-item label="手机号码" prop="phonenumber">
-            <el-input v-model="param.formInline.phonenumber" placeholder="手机号码"></el-input>
+            <el-input v-model="param.data.phonenumber" placeholder="手机号码"></el-input>
           </el-form-item>
           <el-form-item label="用户状态" prop="status">
-            <el-select v-model="param.formInline.status" placeholder="用户状态">
+            <el-select v-model="param.data.status" placeholder="用户状态">
               <el-option label="正常" value="0"></el-option>
               <el-option label="停用" value="1"></el-option>
-              <el-option label="全部" value=""></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
-            <CommonSearchReset @reset="onReset" @search="onSearch"></CommonSearchReset>
+            <CommonSearchReset @reset="onReset" @search="getUserPage"></CommonSearchReset>
           </el-form-item>
         </el-form>
 
@@ -43,7 +42,7 @@
             <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addOrUpdateHandle()">
               新增
             </el-button>
-            <el-button type="danger" plain icon="el-icon-delete" size="mini">
+            <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="deleteUser()">
               删除
             </el-button>
             <el-button type="info" plain icon="el-icon-upload2" size="mini">
@@ -55,7 +54,7 @@
           </template>
         </CommonControlCard>
 
-        <el-table :data="tableData.list" border>
+        <el-table :data="tableData.list" border @selection-change="selectionChangeHandle">
           <el-table-column header-align="center" align="center" type="index" width="50">
           </el-table-column>
           <el-table-column header-align="center" align="center" type="selection" width="55">
@@ -85,25 +84,16 @@
             <template v-slot="scope">
               <el-tooltip :content="'Switch value: ' + scope.row.status" placement="top">
                 <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" active-value="0"
-                  inactive-value="1">
+                  inactive-value="1" @change="updateUserStatus({sysId:scope.row.userId,status:scope.row.status})">
                 </el-switch>
               </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column header-align="center" align="center" fixed="right" label="操作" width="280">
             <template v-slot="scope">
-              <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.userId)">编辑
-              </el-button>
-              <el-popover popper-class="mz-popover" placement="top" width="110" trigger="hover">
-                <p>确定删除吗？</p>
-                <div style="text-align: center; margin: 0">
-                  <el-button type="danger" round size="mini">确定</el-button>
-                </div>
-                <el-button style="margin: 0 10px" type="text" slot="reference" icon="el-icon-delete" size="small">删除
-                </el-button>
-              </el-popover>
-              <el-button type="text" icon="el-icon-edit" size="small" @click="resetPasswd(scope.row)">重置密码
-              </el-button>
+              <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
+              <el-button style="margin: 0 10px" type="text" slot="reference" icon="el-icon-delete" size="small" @click="deleteUser(scope.row)">删除</el-button>
+              <el-button type="text" icon="el-icon-edit" size="small" @click="resetPasswd(scope.row)">重置密码</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -111,7 +101,7 @@
         :pageSize.sync="tableData.pageSize" 
         :totalCount.sync="tableData.totalCount" 
         :page="param.page" 
-        @pageReset="changePageReset"></CommonPagination>
+        @pageReset="getUserPage"></CommonPagination>
       </el-col>
     </el-row>
 
@@ -123,7 +113,7 @@
 
 <script>
 import 'element-ui/lib/theme-chalk/display.css';
-import { getUserPage } from '@/api/system/user.js';
+import { getUserPage,resetPasswd,deleteUser,updateUserStatus } from '@/api/system/user.js';
 import { getDeptTree } from '@/api/system/dept.js';
 import AddOrUpdate from './add-or-update'
 import CommonControlCard from '@/components/common/CommonControlCard';
@@ -144,13 +134,17 @@ export default {
           page: 1,
           limit: 10
         },
-        formInline: {
-          deptId: null
+        data: {
+          deptId: null,
+          username: '',
+          phonenumber: '',
+          status: '',
         },
       },
       tableData: {},
       addOrUpdateVisible: false,
       deptData: [],
+      dataListSelections:[],
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -159,27 +153,23 @@ export default {
   },
   // 组件方法
   methods: {
-    changePageReset(val){
-      this.getUserPage()
-    },
     handleNodeClick(val, node, tree) {
-      console.log(val, node, tree)
-      console.log(`节点数据: ${val.id}`);
-      this.param.formInline.deptId = val.id;
+      this.param.data.deptId = val.id;
       this.param.page = {
         page: 1,
         limit: this.param.page.limit
       };
       this.getUserPage()
     },
-    onSearch() {
-      this.getUserPage()
-    },
     onReset() {
       this.$nextTick(() => {
-        this.param.formInline.deptId = null;
+        this.param.data.deptId = null;
         this.$refs.formInline.resetFields();
       })
+    },
+    // 多选
+    selectionChangeHandle(val) {
+      this.dataListSelections = val
     },
     // 重置密码
     resetPasswd(val) {
@@ -193,33 +183,64 @@ export default {
           type: 'success',
           message: '你的密码是: ' + value
         });
+        resetPasswd({userId:val.userId,password:value}).catch(error => {
+          console.error(error)
+        })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        });       
+        this.$message.info(`取消输入重置[${val.username}]密码`);     
       });
     },
     getUserPage() {
       getUserPage(this.param).then(({ data: res }) => {
-        console.log(res)
         this.tableData = res.data
       }).catch(error => {
-        console.log(error)
+        console.error(error)
       })
     },
     getDeptTree() {
       getDeptTree().then(({ data: res }) => {
-        console.log(res)
         this.deptData = res.data
       }).catch(error => {
-        console.log(error)
+        console.error(error)
       })
     },
     addOrUpdateHandle(userId) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(userId)
+      })
+    },
+    updateUserStatus(val){
+      updateUserStatus(val).then(({ data: res }) => {
+        if (res.code === this.$OkCode) {
+          this.getUserPage();
+        }
+      }).catch(error => {
+        console.error(error)
+      })
+    },
+    deleteUser(val) {
+      var ids = val ? [val.userId] : this.dataListSelections.map(item => {
+        return item.userId
+      })
+      if(ids.length == 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
+      this.$confirm(`${val ? `确定对[${val.username}]进行删除操作` : `确定对[id=${ids.join(',')}]进行批量删除`}操作?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteUser(ids).then(({ data: res }) => {
+          if (res && res.code === this.$OkCode) {
+            this.getUserPage()
+          }
+        }).catch(error => {
+          console.error(error)
+        })
+      }).catch(()=>{
+        this.$message.info(`取消${val ? `删除[${val.username}]` : '批量删除'}`);
       })
     },
     init() {

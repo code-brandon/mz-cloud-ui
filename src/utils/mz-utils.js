@@ -29,3 +29,19 @@ export function isPhone (s) {
 export function isURL (s) {
   return /^http[s]?:\/\/.*/.test(s)
 }
+
+/**
+ * 判断对象是否有空值
+ * @param {*} params 
+ * @returns flag
+ */
+export function paramsValidate (params) {
+  let flag = Object.keys(params).length > 0;
+  for(var key in params){
+    if(!params[key] || params[key] == null || params[key] == ''){
+      return false; // 终止程序
+    }
+  }
+  return flag;
+}
+
