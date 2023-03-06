@@ -73,7 +73,7 @@
       <el-table-column fixed="right" header-align="center" align="center" width="240" label="操作">
         <template v-slot="scope">
           <el-button type="text" icon="el-icon-view" size="mini" @click="dictDataHandle(scope.row.dictType)">查看</el-button>
-          <el-button type="text" icon="el-icon-edit" size="mini" @click="addOrUpdate(scope.row.dictId)">编辑</el-button>
+          <el-button type="text" icon="el-icon-edit" size="mini" @click="addOrUpdateHandle(scope.row.dictId)">编辑</el-button>
           <el-button type="text" icon="el-icon-delete" size="mini" @click="deleteDictType(scope.row)">删除</el-button>
         </template>
       </el-table-column>

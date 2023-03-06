@@ -45,7 +45,7 @@
         </el-button>
       </template>
     </CommonControlCard>
-    <el-table :data="tableData.list" border style="width: 100%;" @selection-change="selectionChangeHandle">
+    <el-table :data="tableData.list" border style="width: 100%;" @selection-change="selectionChangeHandle" v-loading="loading">
       <el-table-column type="selection" header-align="center" align="center" width="50">
       </el-table-column>
       <el-table-column prop="roleId" header-align="center" align="center" label="角色ID">
@@ -136,6 +136,7 @@ export default {
           status:'',
         }
       },
+      loading: true,
       tableData: {},
       dataListSelections:[],
     }
@@ -161,7 +162,6 @@ export default {
     },
     /** 分配数据权限操作 */
     handleDataScope(row) {
-      console.log(row)
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init({type:2,roleId:row.roleId,row})
@@ -187,8 +187,10 @@ export default {
       })
     },
     getRolePage() {
+      this.loading = true
       getRolePage(this.param).then(({ data: res }) => {
         this.tableData = res.data
+        this.loading = false
       }).catch(error => {
         console.log(error)
       })

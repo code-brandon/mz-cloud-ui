@@ -24,6 +24,10 @@
             router
             mode="vertical"
     >
+      <el-menu-item  index="/" key="/">
+        <i class="el-icon-data-analysis"></i>
+        <span>首页</span>
+      </el-menu-item>
       <SidebarItem v-for="(item,index) in asynMenu" :itemMenu="item" :key="index"></SidebarItem>
     </el-menu>
   </div>

@@ -162,8 +162,8 @@ export default {
           delete node.children;
         }
         return {
-          id: node.id,
-          label: node.name,
+          id: node.deptId,
+          label: node.deptName,
           children: node.children
         };
       },

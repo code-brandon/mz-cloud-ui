@@ -40,7 +40,7 @@ class HttpRequest {
    * 拦截器
    * @param {Object} instance axios实例
    */
-  interceptors(instance) {
+  interceptors(instance,reqContext) {
     // 添加请求拦截器
     instance.interceptors.request.use(function (config) {
       // 在请求被发送之前做些什么
@@ -108,10 +108,10 @@ class HttpRequest {
           });
           return Promise.reject(response.data.message);
         }
-        if (response.data.code === store._vm.$OkCode) {
+        if (reqContext ? reqContext.successShow : true && response.data.code === store._vm.$OkCode) {
           Notification({
             title: '成功',
-            message: '这是一条成功的提示消息',
+            message: !!reqContext?.ok_message ? reqContext?.ok_message : '这是一条成功的提示消息',
             type: 'success',
             duration: 1500
           });
@@ -152,13 +152,13 @@ class HttpRequest {
    * 请求
    * @param {Object} options 选项
    */
-  request(options) {
+  request(options,reqContext) {
     const instance = Axios.create()
     options = {...this.getInsideConfig(), ...options}
     // headers 整合
     options.headers = {...this.getInsideConfig().headers,...options.headers}
     // axios实例 给拦截器进行配置
-    this.interceptors(instance)
+    this.interceptors(instance,reqContext)
     // axios实例 配置
     return instance(options)
   }

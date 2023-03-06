@@ -8,6 +8,8 @@ export const getConfigPage = (param) => {
     url: `${basePath}/admin/sysconfig/page?${qs.stringify(param.page)}`,
     method: 'post',
     data: param.data
+  },{
+    successShow: false
   })
 }
 

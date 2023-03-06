@@ -8,6 +8,8 @@ export const getUserMenuTree= () => {
     url: `${basePath}/admin/sysmenu/getUserMenuTree`,
     method: 'get',
     data: null
+  },{
+    successShow: false
   })
 }
 
@@ -16,6 +18,8 @@ export const getMenuTree = () => {
     url: `${basePath}/admin/sysmenu/getMenuTree`,
     method: 'get',
     data: null
+  },{
+    successShow: false
   })
 }
 
@@ -56,5 +60,7 @@ export const getMenuListTree = (param) => {
     url: `${basePath}/admin/sysmenu/getMenuListTree?${qs.stringify(param.data)}`,
     method: 'get',
     data: null
+  },{
+    successShow: false
   })
 }

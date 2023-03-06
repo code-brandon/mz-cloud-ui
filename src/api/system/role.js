@@ -8,6 +8,9 @@ export const getRolePage = (param) => {
     url: `${basePath}/admin/sysrole/page?${qs.stringify(param.page)}`,
     method: 'post',
     data: param.data
+  },
+  {
+    successShow: false
   })
 }
 
@@ -16,6 +19,8 @@ export const getRoleList = () => {
     url: `${basePath}/admin/sysrole/list`,
     method: 'post',
     data: null
+  },{
+    successShow: false
   })
 }
 
@@ -23,6 +28,9 @@ export const getRoleInfo = (roleId) => {
   return axios.request({
     url: `${basePath}/admin/sysrole/info/${roleId}`,
     method: 'get'
+  },
+  {
+    successShow: false
   })
 }
 
@@ -80,6 +88,9 @@ export const listRoleDept = (roleId) => {
     url: `${basePath}/admin/sysroledept/list/${roleId}`,
     method: 'get',
     data: null
+  },
+  {
+    successShow: false
   })
 }
 
@@ -88,6 +99,9 @@ export const getUserPage = (param) => {
     url: `${basePath}/admin/sysuserrole/getUserPage?${qs.stringify(param.page)}`,
     method: 'post',
     data: param.data
+  },
+  {
+    successShow: false
   })
 }
 
@@ -96,6 +110,9 @@ export const getNotThisRoleUserPage = (param) => {
     url: `${basePath}/admin/sysuserrole/getNotThisRoleUserPage?${qs.stringify(param.page)}`,
     method: 'post',
     data: param.data
+  },
+  {
+    successShow: false
   })
 }
 export const saveRoleBindUser = (param) => {

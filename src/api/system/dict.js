@@ -8,6 +8,8 @@ export const getDictDataPage = (param) => {
     url: `${basePath}/admin/sysdictdata/page?${qs.stringify(param.page)}`,
     method: 'post',
     data: param.data
+  },{
+    successShow: false
   })
 }
 
@@ -16,6 +18,21 @@ export const getDictDataInfo = (dictCode) => {
     url: `${basePath}/admin/sysdictdata/info/${dictCode}`,
     method: 'get',
     data: null
+  })
+}
+
+/**
+ * 根据字典类型 返回字典值
+ * @param dictType 字典类型
+ * @returns {AxiosPromise}
+ */
+export const getDictDataByType = (dictType) => {
+  return axios.request({
+    url: `${basePath}/admin/sysdictdata/type/${dictType}`,
+    method: 'get',
+    data: null
+  },{
+    successShow: false
   })
 }
 
@@ -48,6 +65,8 @@ export const deleteDictData= (param) => {
     url: `${basePath}/admin/sysdictdata/delete`,
     method: 'delete',
     data: param
+  },{
+    successShow: false
   })
 }
 
@@ -57,6 +76,8 @@ export const getDictTypePage = (param) => {
     url: `${basePath}/admin/sysdicttype/page?${qs.stringify(param.page)}`,
     method: 'post',
     data: null
+  },{
+    successShow: false
   })
 }
 

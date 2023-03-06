@@ -16,7 +16,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "index" */ '../views/pages/Login.vue'),
+    component: () => import(/* webpackChunkName: "login" */ '../views/pages/Login.vue'),
   },
 ]
 
@@ -50,7 +50,10 @@ router.beforeEach((to, from, next) => {
             store.dispatch('UserMenuTree').then((accessRoutes) => {
               if (accessRoutes.length > 0) {
                 // 根据roles权限生成可访问的路由表
-                router.addRoutes(accessRoutes); // 动态添加可访问路由表
+                // router.addRoutes(accessRoutes); // 动态添加可访问路由表
+                accessRoutes.forEach(r=>{
+                  router.addRoute(r);
+                })
               } else {
                 let isExistPath = false;
                 router.getRoutes().forEach(i=>{

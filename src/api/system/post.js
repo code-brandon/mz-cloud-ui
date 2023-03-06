@@ -8,6 +8,8 @@ export const getPostPage = (param) => {
     url: `${basePath}/admin/syspost/page?${qs.stringify(param.page)}`,
     method: 'post',
     data: param.data
+  },{
+    successShow: false
   })
 }
 
@@ -16,6 +18,8 @@ export const getPostInfo = (postId) => {
     url: `${basePath}/admin/syspost/info/${postId}`,
     method: 'get',
     data: null
+  },{
+    successShow: false
   })
 }
 

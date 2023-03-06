@@ -5,6 +5,8 @@ import store from './store'
 import ElementUI from 'element-ui';
 import Axios from 'axios'
 
+import dict from '@/config/dict'
+
 import 'element-ui/lib/theme-chalk/index.css';
 import 'element-ui/lib/theme-chalk/display.css';
 
@@ -62,6 +64,8 @@ Vue.use(VueWaypoint)
 Vue.use(VueKinesis);
 
 Vue.use(VEmojiPicker);
+
+Vue.use(dict);
 
 Vue.component('VueStar', VueStar)
 

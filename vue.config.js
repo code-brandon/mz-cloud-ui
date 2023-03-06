@@ -76,7 +76,8 @@ module.exports = defineConfig({
       return args;
     });
     // 修改js文件名
-    config.output.chunkFilename(`assets/js/mz-[contenthash:8].js`);
+    config.output.chunkFilename(`assets/js/mz-[contenthash:8].js`).end();
+    config.output.filename(`assets/js/mz-[contenthash:8].js`).end();
 
     // set svg-sprite-loader
     config.module
@@ -141,7 +142,8 @@ module.exports = defineConfig({
   css: {
     extract: {
       // 自定义打包的 css 文件名和路径
-      chunkFilename: `assets/css/mz-[contenthash:8].css`
+      chunkFilename: `assets/css/mz-[contenthash:8].css`,
+      filename: `assets/css/mz-[contenthash:8].css`,
     },
     loaderOptions: {
       css: {

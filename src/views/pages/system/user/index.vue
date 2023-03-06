@@ -14,7 +14,7 @@
     <el-row>
       <el-col class="hidden-xs-only" :xs="24" :md="6" :lg="3" :xl="3">
         <el-tree :data="deptData" @node-click="handleNodeClick" default-expand-all :expand-on-click-node="false"
-          node-key="id" ref="tree" highlight-current :props="defaultProps">
+          node-key="deptId" ref="tree" highlight-current :props="defaultProps">
         </el-tree>
       </el-col>
       <el-col :xs="24" :md="18" :lg="21" :xl="21">
@@ -28,8 +28,19 @@
           </el-form-item>
           <el-form-item label="用户状态" prop="status">
             <el-select v-model="param.data.status" placeholder="用户状态">
-              <el-option label="正常" value="0"></el-option>
-              <el-option label="停用" value="1"></el-option>
+
+
+
+
+
+
+              
+              <el-option
+                  v-for="dict in dict.sys_normal_disable"
+                  :key="dict.dictCode"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+              />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -54,7 +65,7 @@
           </template>
         </CommonControlCard>
 
-        <el-table :data="tableData.list" border @selection-change="selectionChangeHandle">
+        <el-table :data="tableData.list" border @selection-change="selectionChangeHandle" v-loading="loading">
           <el-table-column header-align="center" align="center" type="index" width="50">
           </el-table-column>
           <el-table-column header-align="center" align="center" type="selection" width="55">
@@ -63,11 +74,14 @@
           </el-table-column>
           <el-table-column header-align="center" align="center" prop="username" label="账号" min-width="100">
           </el-table-column>
-          <el-table-column header-align="center" align="center" prop="sexStr" label="性别">
+          <el-table-column header-align="center" align="center" prop="sex" label="性别">
+            <template v-slot="scope">
+              {{ dict.label.sys_user_sex ? dict.label.sys_user_sex[scope.row.sex] ? dict.label.sys_user_sex[scope.row.sex] : '未知' : '未知' }}
+            </template>
           </el-table-column>
           <el-table-column header-align="center" align="center" prop="email" label="邮箱" width="200">
           </el-table-column>
-          <el-table-column header-align="center" align="center" prop="deptId" label="部门">
+          <el-table-column header-align="center" align="center" prop="deptName" label="部门">
           </el-table-column>
           <el-table-column header-align="center" align="center" label="头像">
             <template v-slot="scope">
@@ -78,7 +92,10 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column header-align="center" align="center" prop="roleName" label="类型">
+          <el-table-column header-align="center" align="center" prop="userType" label="类型">
+            <template v-slot="scope">
+              {{ dict.label.sys_user_type ? dict.label.sys_user_type[scope.row.userType] ? dict.label.sys_user_type[scope.row.userType] : '--' : '--' }}
+            </template>
           </el-table-column>
           <el-table-column header-align="center" align="center" label="状态">
             <template v-slot="scope">
@@ -89,10 +106,12 @@
               </el-tooltip>
             </template>
           </el-table-column>
+          <el-table-column header-align="center" align="center" prop="phonenumber" label="手机号" min-width="150">
+          </el-table-column>
           <el-table-column header-align="center" align="center" fixed="right" label="操作" width="280">
             <template v-slot="scope">
               <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
-              <el-button style="margin: 0 10px" type="text" slot="reference" icon="el-icon-delete" size="small" @click="deleteUser(scope.row)">删除</el-button>
+              <el-button type="text" slot="reference" icon="el-icon-delete" size="small" @click="deleteUser(scope.row)">删除</el-button>
               <el-button type="text" icon="el-icon-edit" size="small" @click="resetPasswd(scope.row)">重置密码</el-button>
             </template>
           </el-table-column>
@@ -126,6 +145,7 @@ export default {
   props: {},
   // 局部注册的组件
   components: { CommonControlCard, CommonSearchReset,CommonPagination, AddOrUpdate },
+  dicts:['sys_user_sex','sys_normal_disable','sys_user_type'],
   // 组件状态值
   data() {
     return {
@@ -141,20 +161,21 @@ export default {
           status: '',
         },
       },
+      loading: true,
       tableData: {},
       addOrUpdateVisible: false,
       deptData: [],
       dataListSelections:[],
       defaultProps: {
         children: 'children',
-        label: 'name'
+        label: 'deptName'
       }
     }
   },
   // 组件方法
   methods: {
     handleNodeClick(val, node, tree) {
-      this.param.data.deptId = val.id;
+      this.param.data.deptId = val.deptId;
       this.param.page = {
         page: 1,
         limit: this.param.page.limit
@@ -181,7 +202,7 @@ export default {
       }).then(({ value }) => {
         this.$message({
           type: 'success',
-          message: '你的密码是: ' + value
+          message: `${val.username}的密码是: ${value}`,
         });
         resetPasswd({userId:val.userId,password:value}).catch(error => {
           console.error(error)
@@ -191,8 +212,10 @@ export default {
       });
     },
     getUserPage() {
+      this.loading = true
       getUserPage(this.param).then(({ data: res }) => {
         this.tableData = res.data
+        this.loading = false
       }).catch(error => {
         console.error(error)
       })

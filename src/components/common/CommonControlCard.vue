@@ -16,7 +16,7 @@
     </el-col>
     <el-col :xs="9" :md="12" class="col-right">
       <el-tooltip :content="'隐藏搜搜'" placement="top">
-        <el-button icon="el-icon-search" circle size="mini" @click="handleSearch"></el-button>
+        <el-button icon="el-icon-search" circle size="mini" @click="hideSearch"></el-button>
       </el-tooltip>
       <el-tooltip :content="'刷新'" placement="top">
         <el-button icon="el-icon-refresh" circle size="mini" @click="handleRefresh"></el-button>
@@ -39,8 +39,8 @@ export default {
   },
   // 组件方法
   methods: {
-    handleSearch(row) {
-      this.$emit('search', row)
+    hideSearch(row) {
+      this.$emit('hideSearch', row)
     },
     handleRefresh(row) {
       this.$emit('refresh', row)

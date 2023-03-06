@@ -42,7 +42,7 @@
       </el-button>
     </CommonControlCard>
 
-    <el-table :data="tableData.list" border style="width: 100%;" @selection-change="selectionChangeHandle">
+    <el-table :data="tableData.list" border style="width: 100%;" @selection-change="selectionChangeHandle" v-loading="loading">
       <el-table-column type="selection" header-align="center" align="center" width="50">
       </el-table-column>
       <el-table-column prop="postId" header-align="center" align="center" label="岗位ID">
@@ -116,6 +116,7 @@ export default {
           status:'',
         }
       },
+      loading: true,
       tableData: [],
       // 是否展开，默认全部折叠
       isExpandAll: false,
@@ -137,9 +138,11 @@ export default {
       })
     },
     getPostPage() {
+      this.loading = true
       getPostPage(this.param).then(({ data: res }) => {
         if (res.code === this.$OkCode) {
           this.tableData = res.data
+          this.loading = false
         }
       }).catch(error => {
         console.error(error)

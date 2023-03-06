@@ -24,8 +24,7 @@
           <CommonSearchReset @reset="onReset" @search="getNotThisRoleUserPage"></CommonSearchReset>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData.list" border
-                @selection-change="selectionChangeHandle">
+      <el-table :data="tableData.list" border @selection-change="selectionChangeHandle" v-loading="loading">
           <el-table-column header-align="center" align="center" type="index" width="50">
           </el-table-column>
           <el-table-column header-align="center" align="center" type="selection" width="55">
@@ -94,6 +93,7 @@ export default {
   data () {
     return {
       visible: false,
+      loading: true,
       tableData: Object,
       dataListSelections: [],
       param: {
@@ -127,8 +127,10 @@ export default {
       })
     },
     getNotThisRoleUserPage(){
+      this.loading = true
       getNotThisRoleUserPage(this.param).then(({ data: res }) => {
         this.tableData = res.data
+        this.loading = false
       }).catch(error => {
         console.log(error)
       })

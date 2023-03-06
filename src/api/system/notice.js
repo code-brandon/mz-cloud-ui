@@ -8,6 +8,8 @@ export const getNoticePage = (param) => {
     url: `${basePath}/admin/sysnotice/page?${qs.stringify(param.page)}`,
     method: 'post',
     data: param.data
+  },{
+    successShow: false
   })
 }
 

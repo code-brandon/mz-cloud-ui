@@ -67,25 +67,6 @@ export default {
           let menus = res.data
           commit('SET_MENU',menus)
           const menuArray = [];
-
-          // menus.forEach(item => {
-          //   if (!isURL(item.path )) {
-          //     let rous = {
-          //       name: item.name,
-          //       path: item.path,
-          //       hidden: item.hidden,
-          //       redirect: item.redirect,
-          //       alwaysShow: item.alwaysShow,
-          //       meta: item.meta,
-          //       children: []
-          //     }
-          //     rous.component = () => item.component.toLowerCase() === 'layout' ? import('@/layout/Layout').default : import(`views/pages/${item.component}`).default;
-          //     if (item.children) {
-          //       rous.children = filterMenus(item.children)
-          //     }
-          //     menuArray.push(rous);
-          //   }
-          // });
           menuArray.push(...filterMenus(menus))
           resolve(menuArray)
         }).catch(error => {
@@ -103,7 +84,7 @@ function filterMenus(item) {
   let arr = item.filter(to => {
     return !to.hidden;
   }).map(to => {
-    let rous = {
+    let routs = {
       name: to.name,
       path: to.path,
       hidden: to.hidden,
@@ -113,11 +94,12 @@ function filterMenus(item) {
       meta: to.meta,
       children: []
     }
-    rous.component = () => to.component.toLowerCase() === 'layout' ? import('@/layout/Layout') : import(`@/views/pages/${to.component}`);
+    // 占位符 [index] 和 [request] 被支持为递增的数字或实际解析的文件名
+    routs.component = () => to.component.toLowerCase() === 'layout' ? import('@/layout/Layout') : import(/* webpackChunkName: "[request]" */ `@/views/pages/${to.component}`);
     if (to.children && to.children.length > 0) {
-      rous.children = filterMenus(to.children);
+      routs.children = filterMenus(to.children);
     }
-    return rous;
+    return routs;
   })
   return arr;
 }

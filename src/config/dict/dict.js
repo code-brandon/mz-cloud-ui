@@ -1,6 +1,6 @@
 import Vue from 'vue'
 // 引入自己获取字典的接口
-import {getDicts } from '@/api/system/dict/data'
+import {getDictDataByType } from '@/api/system/dict'
 
 export default class Dict {
   constructor(dict) {
@@ -17,9 +17,9 @@ export default class Dict {
       Vue.set(this.dict.dict, n, {})
       Vue.set(this.dict.label, n, {})
       Vue.set(this.dict, n, [])
-      ps.push(getDicts(n).then(data => {
-        this.dict[n].splice(0, 0, ...data.data)
-        data.data.forEach(d => {
+      ps.push(getDictDataByType(n).then(({ data: res })=> {
+        this.dict[n].splice(0, 0, ...res.data)
+        res.data.forEach(d => {
           /**
            * dictLabel 更改为自己字典的key 就是要显示的文字
            * dictValue 更改为自己字典的value 就是要传的参数

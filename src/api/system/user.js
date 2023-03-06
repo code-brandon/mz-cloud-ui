@@ -11,10 +11,10 @@ export const logout = () => {
 }
 
 export const getUser = () => {
-    return axios.request({
-        url: `${basePath}/admin/sysuser/getUser`,
-        method: 'get',
-    })
+  return axios.request({
+    url: `${basePath}/admin/sysuser/getUser`,
+    method: 'get',
+  })
 }
 
 export const login = (param) => {
@@ -23,10 +23,12 @@ export const login = (param) => {
     headers: {
       isToken: false,
       authorization: "Basic bXpfY2xvdWQ6MTkxMTI5ODQwMg==",
-      "content-type":"application/x-www-form-urlencoded"
+      "content-type": "application/x-www-form-urlencoded"
     },
     method: 'post',
     data: qs.stringify(param)
+  },{
+    ok_message: '登录成功'
   })
 }
 
@@ -35,6 +37,8 @@ export const getUserPage = (param) => {
     url: `${basePath}/admin/sysuser/page?page=${param.page.page}&limit=${param.page.limit}`,
     method: 'post',
     data: param.data
+  },{
+    successShow: false
   })
 }
 

@@ -109,8 +109,8 @@
         <el-col :span="12" v-if="dataForm.menuType ==='C'">
           <el-form-item label="是否缓存" prop="isCache">
             <el-radio-group v-model="dataForm.isCache">
-              <el-radio label="0">缓存</el-radio>
-              <el-radio label="1">不缓存</el-radio>
+              <el-radio :label="0">缓存</el-radio>
+              <el-radio :label="1">不缓存</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -152,7 +152,7 @@ export default {
       dataForm: {
         orderNum: 0,
         isFrame: 1,
-        isCache: "0",
+        isCache: 0,
         visible: "0",
         menuType: "M",
         parentId: 0,
@@ -231,9 +231,7 @@ export default {
 
       this.visible = true;
       this.$nextTick(() => {
-        if (this.$refs.dataForm !== undefined) {
-          this.$refs.dataForm.resetFields();
-        }
+        this.$refs.dataForm.resetFields();
         if (this.dataForm.menuId) {
           getMenuInfo(data.menuId).then(({data: res}) => {
             this.dataForm = res.data;

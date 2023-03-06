@@ -16,12 +16,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="角色名称" prop="roleName">
-            <el-input :disabled="isDptIds" v-model="dataForm.roleName" placeholder="角色名称"></el-input>
+            <el-input :disabled="isDisabled" v-model="dataForm.roleName" placeholder="角色名称"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="权限字符" prop="roleKey">
-            <el-input :disabled="isDptIds" v-model="dataForm.roleKey" placeholder="角色权限字符串"></el-input>
+            <el-input :disabled="isDisabled" v-model="dataForm.roleKey" placeholder="角色权限字符串"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -47,28 +47,33 @@
 
           <el-form-item v-if="isDptIds" label="数据范围" prop="dataScope">
             <el-select v-model="dataForm.dataScope" placeholder="">
-              <el-option v-for="(i) of 10" :value="i" :key="i">{{ i }}</el-option>
+              <el-option
+                  v-for="dict in dict.sys_data_auth"
+                  :key="dict.dictCode"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+              />
             </el-select>
           </el-form-item>
 
-          <el-form-item v-if="isDptIds" label="数据范围" prop="deptIds">
+          <el-form-item v-if="isDptIds && dataForm.dataScope==2" label="数据范围" prop="deptIds">
             <el-checkbox @change="isFold">展开/折叠</el-checkbox>
             <el-checkbox @change="isSelect">全选/全不选</el-checkbox>
             <el-checkbox v-model="dataForm.deptCheckStrictly" :true-label="1" :checked="dataForm.deptCheckStrictly > 0"
               :false-label="0">父子联动</el-checkbox>
             <el-tree :data="deptsDataTree" :default-expand-all="false" show-checkbox
-              :expand-on-click-node="false" node-key="id" ref="deptTree" highlight-current :props="defaultProps"
+              :expand-on-click-node="false" node-key="deptId" ref="deptTree" highlight-current :props="deptProps"
               :check-strictly="dataForm.deptCheckStrictly == 0" >
             </el-tree>
           </el-form-item>
 
-          <el-form-item v-else label="菜单权限" prop="menuIds">
+          <el-form-item v-if="!isDptIds" label="菜单权限" prop="menuIds">
             <el-checkbox @change="isFold">展开/折叠</el-checkbox>
             <el-checkbox @change="isSelect">全选/全不选</el-checkbox>
             <el-checkbox v-model="dataForm.menuCheckStrictly" :true-label="1" :checked="dataForm.menuCheckStrictly > 0"
               :false-label="0">父子联动</el-checkbox>
             <el-tree :data="menusDataTree" :default-expand-all="false" show-checkbox
-              :expand-on-click-node="false" node-key="id" ref="menuTree" highlight-current :props="defaultProps"
+              :expand-on-click-node="false" node-key="id" ref="menuTree" highlight-current :props="menuProps"
               :check-strictly="dataForm.menuCheckStrictly == 0" >
             </el-tree>
           </el-form-item>
@@ -101,6 +106,7 @@ export default {
   props: {},
   // 局部注册的组件
   components: {},
+  dicts: ['sys_data_auth'],
   // 组件状态值
   data() {
     return {
@@ -110,7 +116,11 @@ export default {
       pageType: null,
       menusDataTree: [],
       deptsDataTree: [],
-      defaultProps: {
+      deptProps: {
+        children: 'children',
+        label: 'deptName'
+      },
+      menuProps: {
         children: 'children',
         label: 'name'
       },
@@ -121,7 +131,7 @@ export default {
         roleSort: '',
         menuIds: [],
         deptIds: [],
-        dataScope: '',
+        dataScope: '1',
         menuCheckStrictly: '0',
         deptCheckStrictly: '0',
         status: '0',
@@ -191,7 +201,6 @@ export default {
                   deptIds.push(item.deptId)
                 })
                 this.dataForm.deptIds = deptIds
-                console.log(this.$refs.deptTree.store);
                 this.$refs.deptTree.setCheckedKeys(deptIds);
               }
 
