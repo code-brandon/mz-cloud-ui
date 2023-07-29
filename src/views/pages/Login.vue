@@ -46,6 +46,24 @@
               </el-form-item>
             </el-col>
             <el-col>
+              <el-form-item
+                label="登录校验"
+                label-width="80px"
+                prop="code">
+                <el-popover placement="top" width="400" trigger="manual" v-model="captchaShow">
+                  <captcha ref="captcha" @result="captchaResult" @close="captchaClose"></captcha>
+                  <el-button class="captcha-click" slot="reference" @click="captchaClick">
+                    <div>click 验证</div>
+                    <transition name="el-fade-in">
+                      <div v-show="captchaOk" class="transition-box">
+                        <i class="el-icon-success"></i>
+                      </div>
+                    </transition>
+                  </el-button>
+                </el-popover>
+              </el-form-item>
+            </el-col>
+            <el-col>
               <div class="login_submit_div">
                 <el-button type="primary" @click.native.prevent="Login" class="login_submit">登录</el-button>
                 <el-button type="primary" @click="resetForm"  class="login_submit">重置</el-button>
@@ -60,23 +78,26 @@
 </template>
 
 <script>
+import captcha from '@/components/common/Captcha.vue'
+import {bingBg} from '@/api/common/thirdPartApi'
 
-  import {bingBg} from '@/api/common/thirdPartApi'
-
-  export default {
+export default {
     // 组件名称
     name: 'Login',
     // 组件参数 接收来自父组件的数据
     props: {},
     // 局部注册的组件
-    components: {},
+    components: {captcha},
     // 组件状态值
     data() {
       return {
+        captchaShow: false,
+        captchaOk: false,
         imageUrl:'',
         formData: {
           username:"test",
-          password:"123456"
+          password:"123456",
+          code: '',
         },
         // 校验
         rules: {
@@ -103,12 +124,40 @@
               message: '密码长度不能小于3为',
               trigger: 'blur'
             }
-          ]
+          ],
+          code: [
+            {
+              required: true,
+              message: '请校验验证码',
+              trigger: 'blur',
+            },
+          ],
         }
       }
     },
     // 组件方法
     methods: {
+      captchaClick() {
+        this.captchaShow = true
+        this.$nextTick(() => {
+          this.$refs.captcha.init()
+        })
+      },
+      captchaClose(val) {
+        this.captchaShow = false
+      },
+      captchaResult(val) {
+        if (val && val.data.flg) {
+          this.captchaShow = false
+          this.captchaOk = true
+          this.formData.code = val.data.code
+          this.$message.success('验证成功')
+        } else {
+          this.captchaShow = true
+          this.captchaOk = false
+          this.$message.warning('验证失败')
+        }
+      },
       Login(){
         this.$refs.form.validate((valid) => {
           if (valid) {
@@ -267,6 +316,19 @@
 
   .el-button.login_submit {
     width: 35%;
+  }
+
+  .captcha-click {
+    width: 100%;
+
+    span {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .transition-box {
+      color: #42b983;
+    }
   }
 
   .login_submit_div {

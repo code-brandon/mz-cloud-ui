@@ -32,7 +32,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import * as dayjs from 'dayjs'
 import * as isLeapYear from 'dayjs/plugin/isLeapYear' // import plugin
 import 'dayjs/locale/zh-cn' // import locale
-
+import {isAuth} from '@/utils/mz-auth'
 // Vue页面过渡
 import VuePageTransition from 'vue-page-transition'
 
@@ -73,6 +73,7 @@ Vue.prototype.$http = Axios;
 
 Vue.prototype.$OkCode = 0;
 Vue.prototype.$FailCode = 1;
+Vue.prototype.$isAuth = isAuth;
 
 Vue.use(VuePageTransition)
 

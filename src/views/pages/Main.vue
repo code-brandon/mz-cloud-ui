@@ -24,12 +24,12 @@
     // 组件状态值
     data() {
       return {
-        
+
       }
     },
     // 组件方法
     methods: {
-      
+
     },
     // 计算属性
     computed: {},
@@ -130,5 +130,5 @@
 <!--然而子组件的根节点元素会同时被设置了scoped的父css样式和设置了scoped的子css样式影响，-->
 <!--这么设计的目的是父组件可以对子组件根元素进行布局。-->
 <style lang="less" scoped>
-  
+
 </style>

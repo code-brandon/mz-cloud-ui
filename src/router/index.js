@@ -8,14 +8,21 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Main',
-    meta:{title:'首页',},
-    component: () => import(/* webpackChunkName: "index" */ '../layout/Layout'),
-    children: [],
+    name: 'Layout',
+    component: () => import(/* webpackChunkName: "layout" */ '../layout/Layout'),
+    children: [
+      {
+        path: '',
+        name: 'Index',
+        meta:{title:'首页',},
+        component: () => import(/* webpackChunkName: "index" */ '../views/pages/index/index.vue'),
+      },
+    ],
   },
   {
     path: '/login',
     name: 'Login',
+    meta:{title:'登录',},
     component: () => import(/* webpackChunkName: "login" */ '../views/pages/Login.vue'),
   },
 ]

@@ -1,5 +1,4 @@
 import Cookies from 'js-cookie'
-import {isURL} from 'utils/mz-utils.js'
 import {getUserMenuTree} from '@/api/system/menu.js';
 
 export default {

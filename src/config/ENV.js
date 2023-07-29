@@ -1,6 +1,6 @@
 module.exports = {
 	baseUrl: {
-		dev: 'http://xiaozheng.frp.smallblog.cn',
+		dev: 'http://localhost:88',
 		pro: 'http://localhost:88'
 	},
   publicPath: {

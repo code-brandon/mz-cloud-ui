@@ -28,13 +28,6 @@
           </el-form-item>
           <el-form-item label="用户状态" prop="status">
             <el-select v-model="param.data.status" placeholder="用户状态">
-
-
-
-
-
-
-              
               <el-option
                   v-for="dict in dict.sys_normal_disable"
                   :key="dict.dictCode"
@@ -50,16 +43,16 @@
 
         <CommonControlCard @refresh="getUserPage">
           <template>
-            <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addOrUpdateHandle()">
+            <el-button v-if="$isAuth('system:user:save')" type="primary" plain icon="el-icon-plus" size="mini" @click="addOrUpdateHandle()">
               新增
             </el-button>
-            <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="deleteUser()">
-              删除
+            <el-button v-if="$isAuth('system:user:remove')" type="danger" plain icon="el-icon-delete" size="mini" @click="deleteUser()">
+              批量删除
             </el-button>
-            <el-button type="info" plain icon="el-icon-upload2" size="mini">
+            <el-button v-if="$isAuth('system:user:import')" type="info" plain icon="el-icon-upload2" size="mini">
               导入
             </el-button>
-            <el-button type="warning" plain icon="el-icon-download" size="mini">
+            <el-button v-if="$isAuth('system:user:export')" type="warning" plain icon="el-icon-download" size="mini">
               导出
             </el-button>
           </template>
@@ -106,20 +99,20 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column header-align="center" align="center" prop="phonenumber" label="手机号" min-width="150">
+          <el-table-column v-if="$isAuth()" header-align="center" align="center" prop="phonenumber" label="手机号" min-width="150">
           </el-table-column>
-          <el-table-column header-align="center" align="center" fixed="right" label="操作" width="280">
+          <el-table-column header-align="center" align="center" fixed="right" label="操作">
             <template v-slot="scope">
-              <el-button type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
-              <el-button type="text" slot="reference" icon="el-icon-delete" size="small" @click="deleteUser(scope.row)">删除</el-button>
-              <el-button type="text" icon="el-icon-edit" size="small" @click="resetPasswd(scope.row)">重置密码</el-button>
+              <el-button v-if="$isAuth('system:user:edit')" type="text" icon="el-icon-edit" size="small" @click="addOrUpdateHandle(scope.row.userId)">编辑</el-button>
+              <el-button v-if="$isAuth('system:user:remove')" type="text" slot="reference" icon="el-icon-delete" size="small" @click="deleteUser(scope.row)">删除</el-button>
+              <el-button v-if="$isAuth('system:user:resetpwd')" type="text" icon="el-icon-edit" size="small" @click="resetPasswd(scope.row)">重置密码</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <CommonPagination :currPage.sync="tableData.currPage" 
-        :pageSize.sync="tableData.pageSize" 
-        :totalCount.sync="tableData.totalCount" 
-        :page="param.page" 
+        <CommonPagination :currPage.sync="tableData.currPage"
+        :pageSize.sync="tableData.pageSize"
+        :totalCount.sync="tableData.totalCount"
+        :page="param.page"
         @pageReset="getUserPage"></CommonPagination>
       </el-col>
     </el-row>
@@ -208,7 +201,7 @@ export default {
           console.error(error)
         })
       }).catch(() => {
-        this.$message.info(`取消输入重置[${val.username}]密码`);     
+        this.$message.info(`取消输入重置[${val.username}]密码`);
       });
     },
     getUserPage() {
