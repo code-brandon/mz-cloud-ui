@@ -10,17 +10,20 @@
   修改时间：
 -->
 <template>
+  <div>
+    <!-- <InnerLink src="http://localhost:8080/#/system/user"></InnerLink> -->
+  </div>
 </template>
 
 <script>
-  // import {L2Dwidget} from 'live2d-widget'
+  import InnerLink from '@/layout/components/InnerLink.vue'
   export default {
     // 组件名称
     name: 'Index',
     // 组件参数 接收来自父组件的数据
     props: {},
     // 局部注册的组件
-    components: {},
+    components: {InnerLink},
     // 组件状态值
     data() {
       return {

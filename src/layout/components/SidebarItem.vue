@@ -14,7 +14,8 @@
     <!-- 外层 -->
       <el-submenu v-if="itemMenu.children && itemMenu.children.length>0" :index="parentPath+itemMenu.path" :key="itemMenu.name">
         <template slot="title">
-          <i :class="itemMenu.meta.icon"></i>
+          <!-- <i :class="itemMenu.meta.icon"></i> -->
+          <MzIcon :allName="itemMenu.meta.icon"  />
           <span>{{itemMenu.meta.title}}</span>
         </template>
         <!-- 内嵌 -->
@@ -26,12 +27,14 @@
       <template v-else>
         <Link v-if="isPathURL(itemMenu.path)" :to="itemMenu.path">
           <el-menu-item :key="itemMenu.name">
-            <i :class="itemMenu.meta.icon"></i>
+            <MzIcon :allName="itemMenu.meta.icon"  />
+            <!-- <i :class="itemMenu.meta.icon"></i> -->
             <span slot="title">{{itemMenu.meta.title}}</span>
           </el-menu-item>
         </Link>
         <el-menu-item v-else :index="parentPath+itemMenu.path" :key="itemMenu.name">
-          <i :class="itemMenu.meta.icon"></i>
+          <!-- <i :class="itemMenu.meta.icon"></i> -->
+          <MzIcon :allName="itemMenu.meta.icon"  />
           <span slot="title">{{itemMenu.meta.title}}</span>
         </el-menu-item>
       </template>

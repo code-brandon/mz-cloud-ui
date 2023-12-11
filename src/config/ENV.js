@@ -4,7 +4,7 @@ module.exports = {
 		pro: 'http://localhost:88'
 	},
   publicPath: {
-    dev: '/',
-    pro: '/'
+    dev: './',
+    pro: './'
   },
 }

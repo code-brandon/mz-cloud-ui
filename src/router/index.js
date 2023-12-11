@@ -2,21 +2,32 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store'
 import Config from '@/config/ENV.js'
-
+import bus from '@/layout/components/Bus'; // Vue组件通信中eventBus的使用
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Layout',
-    component: () => import(/* webpackChunkName: "layout" */ '../layout/Layout'),
+    name: 'Main',
+    meta:{title:'首页',},
+    component: () => import(/* webpackChunkName: "index" */ '../layout/Layout'),
     children: [
       {
-        path: '',
-        name: 'Index',
+        path: '/',
+        name: 'Main',
         meta:{title:'首页',},
-        component: () => import(/* webpackChunkName: "index" */ '../views/pages/index/index.vue'),
+        component: () => import(/* webpackChunkName: "main" */ '../views/pages/Main'),
       },
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import(/* webpackChunkName: "redirect" */ '@/views/pages/redirect.vue')
+      }
+      // {
+      //   path: '/gateway',
+      //   name: 'Gateway',
+      //   meta:{title:'动态网关',},
+      //   component: () => import(/* webpackChunkName: "gateway" */ '../views/pages/system/gateway'),
+      // },
     ],
   },
   {
@@ -34,6 +45,13 @@ const router = new VueRouter({
   routes
 })
 
+/**
+ * 小屏监测
+ */
+var mobileSize = false;
+bus.$on('mobileSize', msg => {
+  mobileSize = msg;
+});
 
 // 白名单
 const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
@@ -84,6 +102,12 @@ router.beforeEach((to, from, next) => {
           store.commit('CLEAR_TOKEN')
         });
       } else {
+        /**
+         * 只有小屏进行折叠
+         */
+        if(mobileSize){
+          bus.$emit('collapse', true);
+        }
         next()
       }
     }

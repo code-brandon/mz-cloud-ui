@@ -95,7 +95,8 @@ a {
 
 a, button, button > *, *[class*="submenu"], *[class*="menu"] {
   //color: var(--minor);
-  cursor: url(../mouse-style/link.cur), auto !important;
+  // cursor: url(../mouse-style/link.cur), auto !important;
+  cursor: url(../mouse-style/link.png), auto !important;
 }
 
 *[class*="disabled"] {
@@ -107,7 +108,8 @@ a[class^="a-move"]:hover,.text-move:hover {
 }
 
 body {
-  cursor: url(assets/mouse-style/normal.cur), auto;
+  // cursor: url(assets/mouse-style/normal.cur), auto;
+  cursor: url(assets/mouse-style/normal.png), auto;
   background-color: #f4f4f4;
 }
 
@@ -248,6 +250,52 @@ body:after {
   font-size: 18px;
 }
 
+.el-submenu [class^=bi],body > .el-menu--vertical  .el-menu .el-menu-item > i[class^='bi'] {
+  vertical-align: middle;
+  margin-right: 5px;
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.el-submenu [class^=svg-icon],body > .el-menu--vertical  .el-menu .el-menu-item > [class^='svg-icon'] {
+  vertical-align: middle;
+  margin-right: 5px;
+  width: 24px !important;
+  text-align: center;
+  font-size: 18px;
+}
+
 .mz-el-dialog .el-dialog{
   max-width: 780px !important;
+}
+
+[class*=" bi-"],[class^=bi-],[class*=" fa-"],[class^=fa-] {
+  speak: none;
+  font-style: normal;
+  // font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: baseline;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale
+}
+
+
+.collapseSidebar.sidebar-el-menu {
+  width: 63px !important;
+}
+
+.collapseSidebar.layout-body {
+  margin-left: 63px !important;
+}
+
+.hideSidebar.sidebar {
+  display: none;
+}
+
+.hideSidebar.layout-body {
+  margin-left: 0px !important;
 }

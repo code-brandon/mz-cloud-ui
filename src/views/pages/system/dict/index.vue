@@ -49,7 +49,7 @@
       <el-table-column prop="dictName" header-align="center" align="center" label="字典名称">
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="dictType" header-align="center" align="center"
-        min-width="100" label="字典类型">
+        min-width="180" label="字典类型">
       </el-table-column>
       <el-table-column label="状态" header-align="center" width="80">
         <template v-slot="scope">
@@ -70,7 +70,7 @@
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="remark" header-align="center" align="center" label="备注">
       </el-table-column>
-      <el-table-column fixed="right" header-align="center" align="center" width="240" label="操作">
+      <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
         <template v-slot="scope">
           <el-button type="text" icon="el-icon-view" size="mini" @click="dictDataHandle(scope.row.dictType)">查看</el-button>
           <el-button type="text" icon="el-icon-edit" size="mini" @click="addOrUpdateHandle(scope.row.dictId)">编辑</el-button>
@@ -255,7 +255,7 @@ export default {
    * 实例销毁之前调用。在这一步，实例仍然完全可用。
    */
   beforeDestroy() {
-
+    
   },
   /**
    * Vue 实例销毁后调用。调用后，Vue 实例指示的所有东西都会解绑定，

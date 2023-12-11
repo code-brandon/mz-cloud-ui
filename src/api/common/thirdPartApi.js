@@ -18,3 +18,12 @@ export const bingBg = () => {
     method: 'get',
   })
 }
+
+export const getIcons = () => {
+  return axios.request({
+    url: `assets/icons/icons.json`,
+    method: 'get',
+  },{
+    successShow: false
+  })
+}
