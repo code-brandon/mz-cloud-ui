@@ -41,7 +41,8 @@
       </el-table-column>
       <el-table-column header-align="center" align="center" label="图标" width="60">
         <template v-slot="scope">
-          <i :class="scope.row.icon"></i>
+          <!-- <i :class="scope.row.icon"></i> -->
+          <MzIcon :allName="scope.row.icon"/>
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" prop="weight" width="60" label="排序">
@@ -235,7 +236,6 @@ export default {
    * 所有的事件监听器会被移除，所有的子实例也会被销毁。
    */
   destroyed() {
-
   }
 }
 </script>

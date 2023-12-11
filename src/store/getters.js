@@ -1,6 +1,7 @@
 const getters = {
   token: state => state.user.token,
   menus: status => status.tab.menus,
+  tabsList: status => status.tab.tabsList,
   user: status => status.user.user,
 }
 export default getters

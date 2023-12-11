@@ -27,7 +27,7 @@ module.exports = defineConfig({
   },
   lintOnSave: false,  // 取消lint语法检测，此处可不配置
   outputDir: "dist", // build打包输出目录
-  assetsDir: "assets", // 静态文件输出目录，基于dist
+  assetsDir: "static", // 静态文件输出目录，基于dist
   indexPath: "index.html",  // 输出html文件名
   transpileDependencies: true,
   productionSourceMap: false, // 取消.map文件的打包，加快打包速度
@@ -76,11 +76,36 @@ module.exports = defineConfig({
       return args;
     });
     // 修改js文件名
-    config.output.chunkFilename(`assets/js/mz-[contenthash:8].js`).end();
-    config.output.filename(`assets/js/mz-[contenthash:8].js`).end();
+    config.output.chunkFilename(`static/js/mz-[contenthash:8].js`).end();
+    config.output.filename(`static/js/mz-[contenthash:8].js`).end();
+
 
     // set svg-sprite-loader
     config.module
+    // .rule('image-webpack-loader')
+    // .test(/\.(png|jpe?g|gif)(\?.*)?$/)
+    // .use('image-webpack-loader')
+    // .loader("image-webpack-loader")
+    // .options({
+    //     disable: process.env.NODE_ENV == 'development' ? true : false, // 开发环境禁用压缩，生产环境才做压缩，提升开发调试速度
+    //     mozjpeg: { quality: 60 }, // 压缩JPEG图像，压缩质量quality为60，范围0到100
+    //     optipng: { enabled: true }, // 压缩PNG图像，enabled为true开启压缩
+    //     pngquant: { quality: [0.65, 0.90], speed: 4 }, // 质量区间和速度就使用默认值吧
+    //     gifsicle: { interlaced: false }, // Interlace gif for progressive rendering 默认false
+    //     webp: { quality: 60 } // 压缩webp图片，压缩质量quality为60，范围0到100
+    // })
+    // .end() // 返回上一级 继续添加loader
+    // .rule('url-loader')
+    // .test(/\.(png|jpe?g|gif|svg)(\?.*)?$/)
+    // .use('url-loader')
+    // .loader('url-loader')
+    // .options({
+    //     limit: 1024 * 12,// 小于12kb的图片压缩成base64，图片太大转成base64反而不太合适
+    //     name: "static/img/[name].[ext]",//指定打包后的图片存放的位置，一般放在static下img文件夹里 name.ext分别为：文件名.文件后缀（按照原图片名）
+    //     quality:85,
+    //     esModule: false,
+    // })
+    // .end()
       .rule('svg')
       .exclude.add(resolve('src/assets/icons'))
       .end()
@@ -92,9 +117,18 @@ module.exports = defineConfig({
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]'
+        symbolId: 'svg-icon-[name]'
       })
       .end()
+      .rule('json')
+      .test(/\.json$/)
+      .use('json-loader')
+      .loader('json-loader')
+      .options({
+        symbolId: '[name]'
+      })
+      .end()
+     
 
     config
       .when(process.env.NODE_ENV !== 'development',
@@ -142,8 +176,8 @@ module.exports = defineConfig({
   css: {
     extract: {
       // 自定义打包的 css 文件名和路径
-      chunkFilename: `assets/css/mz-[contenthash:8].css`,
-      filename: `assets/css/mz-[contenthash:8].css`,
+      chunkFilename: `static/css/mz-[contenthash:8].css`,
+      filename: `static/css/mz-[contenthash:8].css`,
     },
     loaderOptions: {
       css: {

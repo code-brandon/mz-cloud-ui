@@ -27,7 +27,7 @@ export function isPhone (s) {
  * @param {*} s
  */
 export function isURL (s) {
-  return /^http[s]?:\/\/.*/.test(s)
+  return /^[h|H]ttp[s]?:\/\/.*/.test(s)
 }
 
 /**
@@ -45,3 +45,52 @@ export function paramsValidate (params) {
   return flag;
 }
 
+
+/**
+ * 深比较两个对象是否相等
+ * @param {*} obj1 
+ * @param {*} obj2 
+ * @returns 
+ */
+export function deepEqual(obj1, obj2) {
+  // 如果两个对象引用相同，则它们一定相等
+  if (obj1 === obj2) {
+    return true;
+  }
+
+  // 如果两个对象的类型不同，则它们一定不相等
+  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+    return false;
+  }
+
+  // 如果两个对象的键值对数量不同，则它们一定不相等
+  if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+    return false;
+  }
+
+  // 检查每个键值对是否相等
+  for (let key in obj1) {
+    // 递归调用deepEqual来比较对应的值
+    if (!deepEqual(obj1[key], obj2[key])) {
+      return false;
+    }
+  }
+
+  // 如果所有的键值对都相等，则两个对象相等
+  return true;
+}
+
+/**
+ * 数组分割
+ * @param {*} array 要分割的数组
+ * @param {*} subGroupLength  每个分片的数量
+ * @returns 
+ */
+export function arrayGroup(array, subGroupLength) {
+  let index = 0;
+  let newArray = [];
+  while(index < array.length) {
+      newArray.push(array.slice(index, index += subGroupLength));
+  }
+  return newArray;
+}

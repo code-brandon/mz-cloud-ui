@@ -205,10 +205,10 @@ export default {
               }
 
             }).catch(error => {
-              console.error(error);
+              console.debug(error);
             })
           }).catch(error => {
-            console.error(error);
+            console.debug(error);
           })
         }
       })
@@ -270,7 +270,7 @@ export default {
           }
 
         }).catch(error => {
-          console.error(error);
+          console.debug(error);
         })
       }
     },

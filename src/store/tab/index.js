@@ -8,10 +8,9 @@ export default {
     // 面包屑 路由数据
     tabsList:[
       {
-        path: '/home',
+        path: '/',
         name: 'Home',
         title: '首页',
-        icon: 'home'
       }
     ],
     // 当前菜单
@@ -36,7 +35,15 @@ export default {
         state.currentMenu = null
       }
     },
-    closeTag(state,val){
+
+    GET_ALL_TAG(state) {
+      state.tabsList = state.tabsList || (Cookies.get('tabs')|| []);
+    },
+    SET_ALL_TAG(state,val){
+      state.tabsList=val
+      Cookies.set('tabs', JSON.stringify(val));
+    },
+    CLOSE_TAG(state,val){
       const result = state.tabsList.findIndex(item=>item.name === val.name)
       state.tabsList.splice(result,1)
     },
@@ -68,6 +75,7 @@ export default {
           commit('SET_MENU',menus)
           const menuArray = [];
           menuArray.push(...filterMenus(menus))
+          console.log(menuArray);
           resolve(menuArray)
         }).catch(error => {
           reject(error)
