@@ -21,6 +21,7 @@
 
 <script>
 import {check, gen} from '@/api/common/captcha.js'
+import * as utils from '@/utils/mz-utils'
 
 export default {
   name: 'Captcha',
@@ -62,6 +63,7 @@ export default {
       let targetTouches = event.originalEvent ? event.originalEvent.targetTouches : event.targetTouches
       let startX = event.pageX
       let startY = event.pageY
+
       if (startX === undefined) {
         startX = Math.round(targetTouches[0].pageX)
         startY = Math.round(targetTouches[0].pageY)
@@ -147,19 +149,20 @@ export default {
     },
 
     valid(captchaConfig) {
+      debugger
       let data = {
         bgImageWidth: captchaConfig.bgImageWidth,
         bgImageHeight: captchaConfig.bgImageHeight,
         sliderImageWidth: captchaConfig.sliderImageWidth,
         sliderImageHeight: captchaConfig.sliderImageHeight,
-        startSlidingTime: captchaConfig.startTime,
-        entSlidingTime: captchaConfig.stopTime,
+        startSlidingTime: utils.getFormatDate(captchaConfig.startTime),
+        entSlidingTime: utils.getFormatDate(captchaConfig.stopTime),
         trackList: captchaConfig.trackArr,
       }
       check(this.currentCaptchaId, data).then(({ data: res }) => {
         this.$emit('result', res)
         if (res && res.data.flg) {
-          this.$store.commit('setCaptchaId', this.currentCaptchaId)
+          this.$store.commit('SET_CAPTCHA_ID', this.currentCaptchaId)
           return
         }
         this.refreshCaptcha()
@@ -170,12 +173,12 @@ export default {
       gen()
         .then(({ data: res }) => {
           this.reset()
-          this.currentCaptchaId = res.data.id
+          this.currentCaptchaId = res.id
 
           const bgImg = this.bgImg
           const sliderImg = this.sliderImg
-          bgImg.src = res.data.captcha.backgroundImage
-          sliderImg.src = res.data.captcha.sliderImage
+          bgImg.src = res.captcha.backgroundImage
+          sliderImg.src = res.captcha.sliderImage
 
           this.initConfig(bgImg.width, bgImg.height, sliderImg.width, sliderImg.height, bgImg.width - 66)
           this.captchaLoading = false
@@ -303,12 +306,13 @@ export default {
 .slider-move .slider-move-btn {
   transform: translate(0px, 0px);
   background-position: -5px 11.79625%;
-  position: absolute;
-  top: -12px;
+  top: -6px;
   left: 0;
-  width: 66px;
-  height: 66px;
+  width: 50px;
+  height: 50px;
   background-color: red;
+  border-radius: 33px;
+  position: absolute;
 }
 
 .slider-move-btn:hover,

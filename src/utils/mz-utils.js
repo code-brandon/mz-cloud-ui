@@ -1,3 +1,4 @@
+import dayjs from "dayjs"
 /**
  * 邮箱
  * @param {*} s
@@ -93,4 +94,20 @@ export function arrayGroup(array, subGroupLength) {
       newArray.push(array.slice(index, index += subGroupLength));
   }
   return newArray;
+}
+
+/**
+ * 当前指定格式日期
+ * @returns YYYY-MM-DD HH:mm:ss
+ */
+export function getNowDate() {
+  return dayjs().format('YYYY-MM-DD HH:mm:ss') ;
+}
+
+/**
+ * 格式化为指定格式日期
+ * @returns YYYY-MM-DD HH:mm:ss
+ */
+export function getFormatDate(val) {
+  return dayjs(val).format('YYYY-MM-DD HH:mm:ss') ;
 }

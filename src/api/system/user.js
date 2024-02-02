@@ -1,5 +1,6 @@
 import axios from '@/config/request.js'
 import qs from 'qs';
+import store from '@/store'
 
 const basePath = '/api/system'
 
@@ -22,6 +23,7 @@ export const login = (param) => {
     url: `/api/auth/oauth/token?grant_type=password`,
     headers: {
       isToken: false,
+      captchaId: store.getters.captchaId,
       authorization: "Basic bXpfY2xvdWQ6MTkxMTI5ODQwMg==",
       "content-type": "application/x-www-form-urlencoded"
     },

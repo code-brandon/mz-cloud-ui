@@ -125,13 +125,13 @@ export default {
               trigger: 'blur'
             }
           ],
-          code: [
-            {
-              required: true,
-              message: '请校验验证码',
-              trigger: 'blur',
-            },
-          ],
+          // code: [
+          //   {
+          //     required: true,
+          //     message: '请校验验证码',
+          //     trigger: 'blur',
+          //   },
+          // ],
         }
       }
     },
@@ -162,6 +162,7 @@ export default {
         this.$refs.form.validate((valid) => {
           if (valid) {
             this.$store.dispatch('Login',this.formData).then((res)=>{
+              this.$store.dispatch('CLEAR_CAPTCHA_ID')
               if (res.code === this.$OkCode) {
                 this.$router.push({path: "/"});
               }

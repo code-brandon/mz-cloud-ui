@@ -107,6 +107,7 @@ router.afterEach(()=>{
 
 dayjs.extend(isLeapYear); // use plugin
 dayjs.locale("zh-cn"); // use locale
+Vue.prototype.dayjs = dayjs; //全局使用dayjs
 
 Vue.config.productionTip = false
 
