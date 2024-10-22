@@ -69,7 +69,6 @@
 <script>
 import { getDeptListTree, deleteDept, getDeptList } from '@/api/system/dept.js';
 import AddOrUpdate from './add-or-update'
-import { paramsValidate } from 'utils/mz-utils.js'
 import CommonControlCard from '@/components/common/CommonControlCard';
 import CommonSearchReset from '@/components/common/CommonSearchReset';
 export default {

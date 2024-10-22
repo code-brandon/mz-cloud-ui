@@ -272,7 +272,7 @@ export default {
 
 .slider-move-track {
   background: blanchedalmond;
-  border-radius: 12px;
+  border-radius: 15px;
   /*text-align: center;*/
   /*line-height: 38px;*/
 }
@@ -310,9 +310,11 @@ export default {
   left: 0;
   width: 50px;
   height: 50px;
-  background-color: red;
+  background-color: #ffffffa8;
   border-radius: 33px;
   position: absolute;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 0 25px #cac6c6;
 }
 
 .slider-move-btn:hover,

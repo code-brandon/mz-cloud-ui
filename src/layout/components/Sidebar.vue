@@ -57,10 +57,12 @@ export default {
     },
   },
   computed: {
+    // 当前路由
     onRoutes() {
       return this.$route.path;
       // return this.$route.path.replace('/', '');;
     },
+    // 加载菜单栏
     asynMenu() {
       let that = this;
       let menus = this.$store.state.tab.menus;
